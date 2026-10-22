@@ -14,6 +14,9 @@ import '../widgets/hero_section.dart';
 import '../widgets/about_section.dart';
 import '../widgets/skills_section.dart';
 import '../widgets/experience_section.dart';
+import '../widgets/projects_section.dart';
+import '../widgets/contact_section.dart';
+import '../widgets/app_footer.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Section scroll keys
@@ -78,16 +81,44 @@ class _HomeScreenState extends State<HomeScreen>
     int newIndex = 0;
     try {
       // Check from last section backward for efficiency
-      final expBox =
-          experienceSectionKey.currentContext?.findRenderObject() as RenderBox?;
-      if (expBox != null && expBox.localToGlobal(Offset.zero).dy <= 260) {
-        newIndex = 3; // Experience
+      final contactBox =
+          contactSectionKey.currentContext?.findRenderObject() as RenderBox?;
+      if (contactBox != null &&
+          contactBox.attached &&
+          contactBox.hasSize &&
+          contactBox.localToGlobal(Offset.zero).dy <= 260) {
+        newIndex = 5; // Contact
+      }
+
+      if (newIndex == 0) {
+        final workBox =
+            workSectionKey.currentContext?.findRenderObject() as RenderBox?;
+        if (workBox != null &&
+            workBox.attached &&
+            workBox.hasSize &&
+            workBox.localToGlobal(Offset.zero).dy <= 260) {
+          newIndex = 4; // Projects
+        }
+      }
+
+      if (newIndex == 0) {
+        final expBox =
+            experienceSectionKey.currentContext?.findRenderObject() as RenderBox?;
+        if (expBox != null &&
+            expBox.attached &&
+            expBox.hasSize &&
+            expBox.localToGlobal(Offset.zero).dy <= 260) {
+          newIndex = 3; // Experience
+        }
       }
 
       if (newIndex == 0) {
         final skillsBox =
             skillsSectionKey.currentContext?.findRenderObject() as RenderBox?;
-        if (skillsBox != null && skillsBox.localToGlobal(Offset.zero).dy <= 260) {
+        if (skillsBox != null &&
+            skillsBox.attached &&
+            skillsBox.hasSize &&
+            skillsBox.localToGlobal(Offset.zero).dy <= 260) {
           newIndex = 2; // Skills
         }
       }
@@ -95,7 +126,10 @@ class _HomeScreenState extends State<HomeScreen>
       if (newIndex == 0) {
         final aboutBox =
             aboutSectionKey.currentContext?.findRenderObject() as RenderBox?;
-        if (aboutBox != null && aboutBox.localToGlobal(Offset.zero).dy <= 260) {
+        if (aboutBox != null &&
+            aboutBox.attached &&
+            aboutBox.hasSize &&
+            aboutBox.localToGlobal(Offset.zero).dy <= 260) {
           newIndex = 1; // About
         }
       }
@@ -174,7 +208,10 @@ class _HomeScreenState extends State<HomeScreen>
                   key: heroSectionKey,
                   hPad: hPad,
                   vPad: isCompact ? 16.0 : 32.0,
-                  child: const HeroSection(),
+                  child: HeroSection(
+                    onViewWorkTap: () => _scrollToKey(workSectionKey),
+                    onGetInTouchTap: () => _scrollToKey(contactSectionKey),
+                  ),
                 ),
 
                 // Chapter 01: About Me Section
@@ -201,8 +238,33 @@ class _HomeScreenState extends State<HomeScreen>
                   child: const ExperienceSection(),
                 ),
 
-                // Footer clearance
-                const SizedBox(height: 80),
+                // Chapter 04: Projects & Innovations Section
+                _SectionContainer(
+                  key: workSectionKey,
+                  hPad: hPad,
+                  vPad: isCompact ? 36.0 : 54.0,
+                  child: const ProjectsSection(),
+                ),
+
+                // Chapter 05: Contact Section
+                _SectionContainer(
+                  key: contactSectionKey,
+                  hPad: hPad,
+                  vPad: isCompact ? 36.0 : 54.0,
+                  child: const ContactSection(),
+                ),
+
+                const SizedBox(height: 40),
+
+                // Final Element: Professional App Footer
+                AppFooter(
+                  onHome: _scrollToTop,
+                  onAbout: () => _scrollToKey(aboutSectionKey),
+                  onSkills: () => _scrollToKey(skillsSectionKey),
+                  onExperience: () => _scrollToKey(experienceSectionKey),
+                  onProjects: () => _scrollToKey(workSectionKey),
+                  onContact: () => _scrollToKey(contactSectionKey),
+                ),
               ],
             ),
           ),
@@ -248,16 +310,19 @@ class _HomeScreenState extends State<HomeScreen>
               top: _mobileMenuOpen ? 80 : -420,
               left: 0,
               right: 0,
-              child: _MobileMenuPanel(
-                isDark: isDark,
-                activeSectionIndex: _activeSectionIndex,
-                onHome: _scrollToTop,
-                onAbout: () => _scrollToKey(aboutSectionKey),
-                onSkills: () => _scrollToKey(skillsSectionKey),
-                onWork: () => _scrollToKey(workSectionKey),
-                onExperience: () => _scrollToKey(experienceSectionKey),
-                onEducation: () => _scrollToKey(educationSectionKey),
-                onContact: () => _scrollToKey(contactSectionKey),
+              child: IgnorePointer(
+                ignoring: !_mobileMenuOpen,
+                child: _MobileMenuPanel(
+                  isDark: isDark,
+                  activeSectionIndex: _activeSectionIndex,
+                  onHome: _scrollToTop,
+                  onAbout: () => _scrollToKey(aboutSectionKey),
+                  onSkills: () => _scrollToKey(skillsSectionKey),
+                  onWork: () => _scrollToKey(workSectionKey),
+                  onExperience: () => _scrollToKey(experienceSectionKey),
+                  onEducation: () => _scrollToKey(educationSectionKey),
+                  onContact: () => _scrollToKey(contactSectionKey),
+                ),
               ),
             ),
 
@@ -568,8 +633,8 @@ class _DesktopCapsuleNav extends StatelessWidget {
       (l10n.navAbout, onAbout, activeIndex == 1, Icons.person_outline_rounded),
       (l10n.navSkills, onSkills, activeIndex == 2, Icons.code_rounded),
       (l10n.navExperience, onExperience, activeIndex == 3, null),
-      (l10n.navProjects, onWork, false, null),
-      (l10n.navContact, onContact, false, null),
+      (l10n.navProjects, onWork, activeIndex == 4, null),
+      (l10n.navContact, onContact, activeIndex == 5, null),
     ];
 
     return ClipRRect(
@@ -918,8 +983,8 @@ class _MobileMenuPanel extends StatelessWidget {
       (l10n.navAbout, onAbout, activeSectionIndex == 1),
       (l10n.navSkills, onSkills, activeSectionIndex == 2),
       (l10n.navExperience, onExperience, activeSectionIndex == 3),
-      (l10n.navProjects, onWork, false),
-      (l10n.navContact, onContact, false),
+      (l10n.navProjects, onWork, activeSectionIndex == 4),
+      (l10n.navContact, onContact, activeSectionIndex == 5),
     ];
 
     return ClipRect(

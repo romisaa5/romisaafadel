@@ -6,35 +6,54 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Experience Entry Data Model
+// Experience Category & Milestone Model
 // ─────────────────────────────────────────────────────────────────────────────
 
-enum ExperienceType { leadership, instruction, mentorship, internship, training, initiative }
+enum ExperienceCategory {
+  professional,
+  teaching,
+  mentorship,
+  leadership,
+  training,
+  development,
+}
 
-class ExperienceEntry {
-  const ExperienceEntry({
-    required this.type,
+class TimelineMilestone {
+  const TimelineMilestone({
+    required this.id,
+    required this.category,
     required this.role,
     required this.organization,
     required this.period,
-    required this.description,
+    required this.descriptionPoints,
     required this.tags,
     this.duration,
+    this.isDateNotSpecified = false,
+    this.technicalTrackTitle,
+    this.technicalTrackDesc,
+    this.nonTechnicalTrackTitle,
+    this.nonTechnicalTrackDesc,
     this.icon,
   });
 
-  final ExperienceType type;
+  final int id;
+  final ExperienceCategory category;
   final String role;
   final String organization;
   final String period;
-  final String description;
+  final List<String> descriptionPoints;
   final List<String> tags;
   final String? duration;
+  final bool isDateNotSpecified;
+  final String? technicalTrackTitle;
+  final String? technicalTrackDesc;
+  final String? nonTechnicalTrackTitle;
+  final String? nonTechnicalTrackDesc;
   final IconData? icon;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Main Experience Section Widget
+// Main Experience & Training Section Widget
 // ─────────────────────────────────────────────────────────────────────────────
 
 class ExperienceSection extends StatefulWidget {
@@ -46,72 +65,97 @@ class ExperienceSection extends StatefulWidget {
 
 class _ExperienceSectionState extends State<ExperienceSection>
     with TickerProviderStateMixin {
-
+  // Section Header animations
   late final AnimationController _headerCtrl;
   late final Animation<double> _tagFade;
   late final Animation<Offset> _tagSlide;
   late final Animation<double> _headingFade;
   late final Animation<Offset> _headingSlide;
+  late final Animation<double> _ruleExpand;
   late final Animation<double> _subtitleFade;
 
-  final List<AnimationController> _entryCtrl = [];
-  final List<Animation<double>> _entryFade = [];
-  final List<Animation<Offset>> _entrySlide = [];
-  final List<Animation<double>> _entryScale = [];
+  // Continuous Traveling Light Pulse along the Timeline Spine
+  late final AnimationController _spinePulseCtrl;
 
-  late final AnimationController _chapterBCtrl;
-  late final Animation<double> _chapterBFade;
+  // Staggered reveal animations for all 7 milestones
+  final List<AnimationController> _milestoneCtrl = [];
+  final List<Animation<double>> _milestoneFade = [];
+  final List<Animation<Offset>> _milestoneSlide = [];
+  final List<Animation<double>> _milestoneScale = [];
 
   bool _headerVisible = false;
-  final List<bool> _entryVisible = List.filled(7, false);
-  bool _chapterBVisible = false;
+  final List<bool> _milestoneVisible = List.filled(7, false);
+
+  // Filter state: 0 = All (7), 1 = Professional & Leadership, 2 = Teaching & Mentoring, 3 = Technical Training
+  int _selectedFilter = 0;
+
+  // Hovered milestone index (-1 if none)
+  int _hoveredIndex = -1;
 
   @override
   void initState() {
     super.initState();
 
+    // 1. Header Animation Controller
     _headerCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 950),
     );
 
     _tagFade = CurvedAnimation(
       parent: _headerCtrl,
       curve: const Interval(0.0, 0.35, curve: Curves.easeOut),
     );
-    _tagSlide = Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(
-      CurvedAnimation(parent: _headerCtrl, curve: const Interval(0.0, 0.35, curve: Curves.easeOut)),
+    _tagSlide = Tween<Offset>(begin: const Offset(0, 0.4), end: Offset.zero).animate(
+      CurvedAnimation(parent: _headerCtrl, curve: const Interval(0.0, 0.35, curve: Curves.easeOutCubic)),
     );
+
     _headingFade = CurvedAnimation(
       parent: _headerCtrl,
       curve: const Interval(0.2, 0.65, curve: Curves.easeOut),
     );
     _headingSlide = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
-      CurvedAnimation(parent: _headerCtrl, curve: const Interval(0.2, 0.65, curve: Curves.easeOut)),
+      CurvedAnimation(parent: _headerCtrl, curve: const Interval(0.2, 0.65, curve: Curves.easeOutCubic)),
     );
+
+    _ruleExpand = CurvedAnimation(
+      parent: _headerCtrl,
+      curve: const Interval(0.4, 0.8, curve: Curves.easeOutCubic),
+    );
+
     _subtitleFade = CurvedAnimation(
       parent: _headerCtrl,
-      curve: const Interval(0.5, 1.0, curve: Curves.easeOut),
+      curve: const Interval(0.55, 1.0, curve: Curves.easeOut),
     );
 
-    _chapterBCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
-    _chapterBFade = CurvedAnimation(parent: _chapterBCtrl, curve: Curves.easeOut);
+    // 2. Spine Continuous Traveling Light Pulse (subtle glowing energy traveling down the line)
+    _spinePulseCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..repeat();
 
+    // 3. Staggered reveal for each milestone
     for (int i = 0; i < 7; i++) {
-      final ctrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
-      _entryCtrl.add(ctrl);
-      _entryFade.add(CurvedAnimation(
+      final ctrl = AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 750),
+      );
+      _milestoneCtrl.add(ctrl);
+
+      _milestoneFade.add(CurvedAnimation(
         parent: ctrl,
-        curve: const Interval(0.0, 0.7, curve: Curves.easeOut),
+        curve: const Interval(0.0, 0.75, curve: Curves.easeOut),
       ));
-      _entrySlide.add(
-        Tween<Offset>(begin: const Offset(0, 0.25), end: Offset.zero).animate(
-          CurvedAnimation(parent: ctrl, curve: const Interval(0.0, 0.8, curve: Curves.easeOut)),
+
+      _milestoneSlide.add(
+        Tween<Offset>(begin: const Offset(0, 0.16), end: Offset.zero).animate(
+          CurvedAnimation(parent: ctrl, curve: const Interval(0.0, 0.85, curve: Curves.easeOutCubic)),
         ),
       );
-      _entryScale.add(
-        Tween<double>(begin: 0.94, end: 1.0).animate(
-          CurvedAnimation(parent: ctrl, curve: Curves.easeOut),
+
+      _milestoneScale.add(
+        Tween<double>(begin: 0.95, end: 1.0).animate(
+          CurvedAnimation(parent: ctrl, curve: Curves.easeOutCubic),
         ),
       );
     }
@@ -120,8 +164,8 @@ class _ExperienceSectionState extends State<ExperienceSection>
   @override
   void dispose() {
     _headerCtrl.dispose();
-    _chapterBCtrl.dispose();
-    for (final c in _entryCtrl) {
+    _spinePulseCtrl.dispose();
+    for (final c in _milestoneCtrl) {
       c.dispose();
     }
     super.dispose();
@@ -134,15 +178,182 @@ class _ExperienceSectionState extends State<ExperienceSection>
     }
   }
 
-  void _onEntryVisible(int index) {
-    if (!_entryVisible[index]) {
-      _entryVisible[index] = true;
-      _entryCtrl[index].forward();
-      if (index == 4 && !_chapterBVisible) {
-        _chapterBVisible = true;
-        _chapterBCtrl.forward();
-      }
+  void _onMilestoneVisible(int index) {
+    if (!_milestoneVisible[index]) {
+      _milestoneVisible[index] = true;
+      _milestoneCtrl[index].forward();
     }
+  }
+
+  bool _isItemHighlighted(ExperienceCategory category) {
+    if (_selectedFilter == 0) return true;
+    switch (_selectedFilter) {
+      case 1: // Professional & Leadership
+        return category == ExperienceCategory.professional ||
+            category == ExperienceCategory.leadership;
+      case 2: // Teaching & Mentoring
+        return category == ExperienceCategory.teaching ||
+            category == ExperienceCategory.mentorship;
+      case 3: // Technical Training
+        return category == ExperienceCategory.training ||
+            category == ExperienceCategory.development;
+      default:
+        return true;
+    }
+  }
+
+  List<TimelineMilestone> _buildMilestones(AppLocalizations l10n, bool isArabic) {
+    return [
+      // 1. Growfet — Flutter Developer Intern (Professional Experience)
+      TimelineMilestone(
+        id: 1,
+        category: ExperienceCategory.professional,
+        role: l10n.expEntry5Role,
+        organization: l10n.expEntry5Org,
+        period: l10n.expDateNotSpecified,
+        isDateNotSpecified: true,
+        icon: Icons.business_center_rounded,
+        descriptionPoints: isArabic
+            ? const [
+                'طوّرت وصانت تطبيقات هواتف محمولة باستخدام Flutter وDart.',
+                'نفّذت واجهات مستخدم نظيفة وقابلة للتوسع وفق مبادئ التصميم الحديثة.',
+                'ربطت واجهات برمجة التطبيقات RESTful وأدارت حالة التطبيق بكفاءة.',
+                'استكشفت الأخطاء البرمجية وحسّنت أداء التطبيق لتوفير تجربة مستخدم سلسة.',
+                'تعاونت ضمن فريق عمل يتبع أفضل ممارسات هندسة البرمجيات وأنظمة التحكم في الإصدارات.',
+              ]
+            : const [
+                'Developed and maintained mobile applications using Flutter and Dart.',
+                'Implemented clean and scalable UI following modern design principles.',
+                'Integrated RESTful APIs and managed application state.',
+                'Debugged issues and optimized app performance for a better user experience.',
+                'Collaborated within a team using best practices and version control.',
+              ],
+        tags: [l10n.expEntry5Tag1, l10n.expEntry5Tag2, l10n.expEntry5Tag3, l10n.expEntry5Tag4],
+      ),
+
+      // 2. CIS Team — Flutter Mentor (Mentoring & Community, 2024–2025)
+      TimelineMilestone(
+        id: 2,
+        category: ExperienceCategory.mentorship,
+        role: l10n.expEntry4Role,
+        organization: l10n.expEntry4Org,
+        period: l10n.expEntry4Period,
+        icon: Icons.handshake_rounded,
+        descriptionPoints: isArabic
+            ? const [
+                'دعمت الأعضاء الجدد في استيعاب مفاهيم Flutter وحل المشكلات البرمجية.',
+                'ساهمت في تنظيم الجلسات التعليمية وإرشاد الطلاب خلال المشاريع والمهام.',
+              ]
+            : const [
+                'Supported junior members in understanding Flutter concepts and solving coding problems.',
+                'Assisted in organizing learning sessions and guiding students through projects and tasks.',
+              ],
+        tags: [l10n.expEntry4Tag1, l10n.expEntry4Tag2, l10n.expEntry4Tag3],
+      ),
+
+      // 3. CIS Team — Flutter Instructor, Technical Gates 5 (Teaching & Mentoring, 2024–2025)
+      TimelineMilestone(
+        id: 3,
+        category: ExperienceCategory.teaching,
+        role: l10n.expEntry3Role,
+        organization: l10n.expEntry3Org,
+        period: l10n.expEntry3Period,
+        icon: Icons.school_rounded,
+        descriptionPoints: isArabic
+            ? const [
+                'قدّمت جلسات تعليمية وأرشدت الطلاب في مسار Flutter كجزء من برنامج Technical Gates 5 بتنظيم من فريق CIS.',
+                'ساعدت المشاركين على فهم مفاهيم Flutter الأساسية وتطبيقها في مشاريع عملية مصغرة.',
+              ]
+            : const [
+                'Delivered sessions and mentored students in the Flutter track as part of the Technical Gates 5 program organized by the CIS Team.',
+                'Helped participants understand core Flutter concepts and apply them in practical mini-projects.',
+              ],
+        tags: [l10n.expEntry3Tag1, l10n.expEntry3Tag2, l10n.expEntry3Tag3],
+      ),
+
+      // 4. ITI — Flutter Trainee, Winter Internship (Technical Training, Jan 2025, 60 Hours)
+      TimelineMilestone(
+        id: 4,
+        category: ExperienceCategory.training,
+        role: l10n.expEntry6Role,
+        organization: l10n.expEntry6Org,
+        period: l10n.expEntry6Period,
+        duration: l10n.expEntry6Duration,
+        icon: Icons.developer_board_rounded,
+        descriptionPoints: isArabic
+            ? const [
+                'تصميم واجهات المستخدم وبناء الـ Widgets الاحترافية في Flutter.',
+                'ربط واجهات برمجة التطبيقات (APIs) ومعالجة البيانات المتدفقة.',
+                'تطبيق تقنيات وأساليب إدارة الحالة المتقدمة (State Management).',
+                'مقدمة إلى العمل الحر وتخطيط وتنفيذ المشاريع البرمجية الواقعية.',
+              ]
+            : const [
+                'Flutter widgets and UI design.',
+                'API integration and data handling.',
+                'State management techniques.',
+                'Introduction to freelancing and real-world project planning.',
+              ],
+        tags: [l10n.expEntry6Tag1, l10n.expEntry6Tag2, l10n.expEntry6Tag3, l10n.expEntry6Tag4],
+      ),
+
+      // 5. BreakinPoint Team — Flutter Instructor, Flutter Bootcamp (Teaching & Mentoring, 2025)
+      TimelineMilestone(
+        id: 5,
+        category: ExperienceCategory.teaching,
+        role: l10n.expEntry2Role,
+        organization: l10n.expEntry2Org,
+        period: l10n.expEntry2Period,
+        icon: Icons.laptop_mac_rounded,
+        descriptionPoints: isArabic
+            ? const [
+                'قادت معسكراً تدريبياً لـ Flutter مدته شهر ونصف، أرشدت فيه المشاركين من الأساسيات حتى تطوير المشروع النهائي.',
+                'قدّمت تدريباً عملياً مباشراً ومتابعة مستمرة ودعماً فردياً طوال فترة المعسكر.',
+              ]
+            : const [
+                'Led a 1.5-month Flutter bootcamp, guiding participants from fundamentals to final project development.',
+                'Provided hands-on training, follow-up, and individual support throughout the bootcamp.',
+              ],
+        tags: [l10n.expEntry2Tag1, l10n.expEntry2Tag2, l10n.expEntry2Tag3],
+      ),
+
+      // 6. DEPI — Digital Egypt Pioneers Initiative (Technical & Professional Development, June 2025)
+      TimelineMilestone(
+        id: 6,
+        category: ExperienceCategory.development,
+        role: l10n.expEntry7Role,
+        organization: l10n.expEntry7Org,
+        period: l10n.expEntry7Period,
+        icon: Icons.rocket_launch_rounded,
+        technicalTrackTitle: l10n.expTechTrackTitle,
+        technicalTrackDesc: isArabic
+            ? 'دراسة مسار التطبيقات متعددة المنصات باستخدام Flutter، مع التركيز على بناء تطبيقات موبايل قابلة للتوسع.'
+            : 'Studying the Cross Platform track using Flutter, focusing on building scalable, multi-platform mobile applications.',
+        nonTechnicalTrackTitle: l10n.expNonTechTrackTitle,
+        nonTechnicalTrackDesc: isArabic
+            ? 'المشاركة في جلسات صقل المهارات الشخصية (Soft Skills)، وأساسيات العمل الحر، ومهارات التواصل والتطوير الوظيفي.'
+            : 'Participating in sessions on soft skills, freelancing basics, communication, and career development.',
+        descriptionPoints: const [],
+        tags: [l10n.expEntry7Tag1, l10n.expEntry7Tag2, l10n.expEntry7Tag3, l10n.expEntry7Tag4],
+      ),
+
+      // 7. IEEE Mansoura CS Chapter — Head, Flutter Circle (Leadership & Community, 2025–2026)
+      TimelineMilestone(
+        id: 7,
+        category: ExperienceCategory.leadership,
+        role: l10n.expEntry1Role,
+        organization: l10n.expEntry1Org,
+        period: l10n.expEntry1Period,
+        icon: Icons.groups_rounded,
+        descriptionPoints: isArabic
+            ? const [
+                'شاركت بفاعلية في قيادة وإدارة دائرة Flutter، مساهمةً في المناقشات والأنشطة والفعاليات المتخصصة في تطوير تطبيقات Flutter.',
+              ]
+            : const [
+                'Actively participated in the Flutter Circle, contributing to discussions, activities, and events related to Flutter development.',
+              ],
+        tags: [l10n.expEntry1Tag1, l10n.expEntry1Tag2, l10n.expEntry1Tag3],
+      ),
+    ];
   }
 
   @override
@@ -152,89 +363,22 @@ class _ExperienceSectionState extends State<ExperienceSection>
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
     final isDesktop = context.isWide;
     final isCompact = context.isCompact;
-    final accentColor = isDark ? AppColors.dustyRose : AppColors.mauve;
+
     final primaryText = isDark ? AppColors.ivory : AppColors.deepPlum;
     final secondaryText = isDark
-        ? AppColors.dustyRose.withValues(alpha: 0.85)
-        : AppColors.mauve.withValues(alpha: 0.88);
+        ? AppColors.dustyRose.withValues(alpha: 0.90)
+        : AppColors.mauve.withValues(alpha: 0.90);
     final bodyText = isDark
-        ? AppColors.ivory.withValues(alpha: 0.76)
-        : AppColors.deepPlum.withValues(alpha: 0.74);
+        ? AppColors.ivory.withValues(alpha: 0.78)
+        : AppColors.deepPlum.withValues(alpha: 0.76);
+    final accentColor = isDark ? AppColors.dustyRose : AppColors.mauve;
 
-    final chapterAEntries = [
-      ExperienceEntry(
-        type: ExperienceType.leadership,
-        role: l10n.expEntry1Role,
-        organization: l10n.expEntry1Org,
-        period: l10n.expEntry1Period,
-        description: l10n.expEntry1Desc,
-        tags: [l10n.expEntry1Tag1, l10n.expEntry1Tag2, l10n.expEntry1Tag3],
-        icon: Icons.groups_rounded,
-      ),
-      ExperienceEntry(
-        type: ExperienceType.instruction,
-        role: l10n.expEntry2Role,
-        organization: l10n.expEntry2Org,
-        period: l10n.expEntry2Period,
-        description: l10n.expEntry2Desc,
-        tags: [l10n.expEntry2Tag1, l10n.expEntry2Tag2, l10n.expEntry2Tag3],
-        icon: Icons.school_rounded,
-      ),
-      ExperienceEntry(
-        type: ExperienceType.instruction,
-        role: l10n.expEntry3Role,
-        organization: l10n.expEntry3Org,
-        period: l10n.expEntry3Period,
-        description: l10n.expEntry3Desc,
-        tags: [l10n.expEntry3Tag1, l10n.expEntry3Tag2, l10n.expEntry3Tag3],
-        icon: Icons.laptop_mac_rounded,
-      ),
-      ExperienceEntry(
-        type: ExperienceType.mentorship,
-        role: l10n.expEntry4Role,
-        organization: l10n.expEntry4Org,
-        period: l10n.expEntry4Period,
-        description: l10n.expEntry4Desc,
-        tags: [l10n.expEntry4Tag1, l10n.expEntry4Tag2, l10n.expEntry4Tag3],
-        icon: Icons.handshake_rounded,
-      ),
-    ];
-
-    final chapterBEntries = [
-      ExperienceEntry(
-        type: ExperienceType.internship,
-        role: l10n.expEntry5Role,
-        organization: l10n.expEntry5Org,
-        period: l10n.expEntry5Period,
-        description: l10n.expEntry5Desc,
-        tags: [l10n.expEntry5Tag1, l10n.expEntry5Tag2, l10n.expEntry5Tag3, l10n.expEntry5Tag4],
-        icon: Icons.business_center_rounded,
-      ),
-      ExperienceEntry(
-        type: ExperienceType.training,
-        role: l10n.expEntry6Role,
-        organization: l10n.expEntry6Org,
-        period: l10n.expEntry6Period,
-        description: l10n.expEntry6Desc,
-        tags: [l10n.expEntry6Tag1, l10n.expEntry6Tag2, l10n.expEntry6Tag3],
-        duration: l10n.expEntry6Duration,
-        icon: Icons.developer_board_rounded,
-      ),
-      ExperienceEntry(
-        type: ExperienceType.initiative,
-        role: l10n.expEntry7Role,
-        organization: l10n.expEntry7Org,
-        period: l10n.expEntry7Period,
-        description: l10n.expEntry7Desc,
-        tags: [l10n.expEntry7Tag1, l10n.expEntry7Tag2, l10n.expEntry7Tag3],
-        icon: Icons.rocket_launch_rounded,
-      ),
-    ];
+    final milestones = _buildMilestones(l10n, isArabic);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // ── Section Header ────────────────────────────────────────────────────
+        // ── 1. Section Header ──────────────────────────────────────────
         _VisibilityTrigger(
           onVisible: _onHeaderVisible,
           child: AnimatedBuilder(
@@ -250,105 +394,95 @@ class _ExperienceSectionState extends State<ExperienceSection>
           ),
         ),
 
-        const SizedBox(height: 56),
-
-        // ── Chapter A ─────────────────────────────────────────────────────────
-        _ChapterDivider(
-          tag: l10n.expChapterATag,
-          title: l10n.expChapterATitle,
-          isDark: isDark,
-          isArabic: isArabic,
-          accentColor: const Color(0xFF704C67),
-        ),
-
         const SizedBox(height: 32),
 
-        ...List.generate(chapterAEntries.length, (i) {
+        // ── 2. Interactive Domain Filter Tabs ──────────────────────────
+        _buildFilterBar(l10n, isDark, isArabic, accentColor),
+
+        const SizedBox(height: 48),
+
+        // ── 3. Continuous Interconnected Timeline ──────────────────────
+        // All milestones form a continuous visual path from entry 0 to entry 6
+        ...List.generate(milestones.length, (index) {
+          final milestone = milestones[index];
+          final isHighlighted = _isItemHighlighted(milestone.category);
+          final isHovered = _hoveredIndex == index;
+          final isFirst = index == 0;
+          final isLast = index == milestones.length - 1;
+
           return _VisibilityTrigger(
-            onVisible: () => _onEntryVisible(i),
+            onVisible: () => _onMilestoneVisible(index),
             child: AnimatedBuilder(
-              animation: _entryCtrl[i],
-              builder: (ctx, _) => Padding(
-                padding: EdgeInsets.only(bottom: isCompact ? 24.0 : 32.0),
-                child: FadeTransition(
-                  opacity: _entryFade[i],
+              animation: Listenable.merge([
+                _milestoneCtrl[index],
+                _spinePulseCtrl,
+              ]),
+              builder: (ctx, _) {
+                return FadeTransition(
+                  opacity: _milestoneFade[index],
                   child: SlideTransition(
-                    position: _entrySlide[i],
+                    position: _milestoneSlide[index],
                     child: ScaleTransition(
-                      scale: _entryScale[i],
-                      alignment: Alignment.topCenter,
-                      child: _ExperienceCard(
-                        entry: chapterAEntries[i],
-                        isDark: isDark,
-                        isArabic: isArabic,
-                        isDesktop: isDesktop,
-                        isCompact: isCompact,
-                        primaryText: primaryText,
-                        secondaryText: secondaryText,
-                        bodyText: bodyText,
+                      scale: _milestoneScale[index],
+                      alignment: isDesktop
+                          ? (index.isEven ? Alignment.centerRight : Alignment.centerLeft)
+                          : Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 0),
+                        child: AnimatedOpacity(
+                          duration: const Duration(milliseconds: 320),
+                          opacity: isHighlighted ? 1.0 : 0.35,
+                          child: isDesktop
+                              ? _buildDesktopMilestoneRow(
+                                  milestone: milestone,
+                                  index: index,
+                                  isFirst: isFirst,
+                                  isLast: isLast,
+                                  isHovered: isHovered,
+                                  isDark: isDark,
+                                  isArabic: isArabic,
+                                  primaryText: primaryText,
+                                  secondaryText: secondaryText,
+                                  bodyText: bodyText,
+                                  accentColor: accentColor,
+                                  pulseProgress: _spinePulseCtrl.value,
+                                )
+                              : _buildMobileMilestoneRow(
+                                  milestone: milestone,
+                                  index: index,
+                                  isFirst: isFirst,
+                                  isLast: isLast,
+                                  isHovered: isHovered,
+                                  isDark: isDark,
+                                  isCompact: isCompact,
+                                  isArabic: isArabic,
+                                  primaryText: primaryText,
+                                  secondaryText: secondaryText,
+                                  bodyText: bodyText,
+                                  accentColor: accentColor,
+                                  pulseProgress: _spinePulseCtrl.value,
+                                ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           );
         }),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: 48),
 
-        // ── Chapter B Divider ─────────────────────────────────────────────────
-        FadeTransition(
-          opacity: _chapterBFade,
-          child: _ChapterDivider(
-            tag: l10n.expChapterBTag,
-            title: l10n.expChapterBTitle,
-            isDark: isDark,
-            isArabic: isArabic,
-            accentColor: const Color(0xFF8B6A7F),
-          ),
-        ),
-
-        const SizedBox(height: 32),
-
-        ...List.generate(chapterBEntries.length, (i) {
-          final gi = i + 4;
-          return _VisibilityTrigger(
-            onVisible: () => _onEntryVisible(gi),
-            child: AnimatedBuilder(
-              animation: _entryCtrl[gi],
-              builder: (ctx, _) => Padding(
-                padding: EdgeInsets.only(bottom: isCompact ? 24.0 : 32.0),
-                child: FadeTransition(
-                  opacity: _entryFade[gi],
-                  child: SlideTransition(
-                    position: _entrySlide[gi],
-                    child: ScaleTransition(
-                      scale: _entryScale[gi],
-                      alignment: Alignment.topCenter,
-                      child: _ExperienceCard(
-                        entry: chapterBEntries[i],
-                        isDark: isDark,
-                        isArabic: isArabic,
-                        isDesktop: isDesktop,
-                        isCompact: isCompact,
-                        primaryText: primaryText,
-                        secondaryText: secondaryText,
-                        bodyText: bodyText,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
-        }),
-
-        const SizedBox(height: 24),
+        // ── 4. Architectural Bottom Divider ────────────────────────────
         _SectionBottomDivider(isDark: isDark),
       ],
     );
   }
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // Section Header
+  // ───────────────────────────────────────────────────────────────────────────
 
   Widget _buildHeader({
     required AppLocalizations l10n,
@@ -360,22 +494,24 @@ class _ExperienceSectionState extends State<ExperienceSection>
   }) {
     final headingStyle = isArabic
         ? GoogleFonts.amiri(
-            fontSize: isDesktop ? 50 : 34,
+            fontSize: isDesktop ? 44 : 32,
             fontWeight: FontWeight.w700,
             fontStyle: FontStyle.italic,
-            height: 1.15,
+            height: 1.25,
             color: primaryText,
           )
         : GoogleFonts.dmSerifDisplay(
-            fontSize: isDesktop ? 50 : 34,
+            fontSize: isDesktop ? 46 : 32,
             fontStyle: FontStyle.italic,
             height: 1.15,
+            letterSpacing: -0.3,
             color: primaryText,
           );
 
     return Column(
       crossAxisAlignment: isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
+        // Category Tag
         FadeTransition(
           opacity: _tagFade,
           child: SlideTransition(
@@ -383,8 +519,9 @@ class _ExperienceSectionState extends State<ExperienceSection>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
               decoration: BoxDecoration(
-                border: Border.all(color: accentColor.withValues(alpha: 0.45), width: 1.0),
-                borderRadius: BorderRadius.circular(4),
+                color: accentColor.withValues(alpha: 0.12),
+                border: Border.all(color: accentColor.withValues(alpha: 0.40), width: 1.0),
+                borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
                 l10n.expSectionTag,
@@ -399,32 +536,38 @@ class _ExperienceSectionState extends State<ExperienceSection>
           ),
         ),
 
-        const SizedBox(height: 18),
+        const SizedBox(height: 16),
 
+        // Main Title
         FadeTransition(
           opacity: _headingFade,
           child: SlideTransition(
             position: _headingSlide,
-            child: Text(l10n.expSectionHeading, style: headingStyle),
+            child: Text(
+              l10n.expSectionHeading,
+              textAlign: isArabic ? TextAlign.right : TextAlign.left,
+              style: headingStyle,
+            ),
           ),
         ),
 
+        // Animated underline accent rule
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 14),
-          child: AnimatedBuilder(
-            animation: _headingFade,
-            builder: (context, _) {
-              final w = MediaQuery.sizeOf(context).width;
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final maxWidth = (constraints.maxWidth * 0.45).clamp(120.0, 480.0);
               return Align(
                 alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
                 child: Container(
-                  height: 1.5,
-                  width: _headingFade.value * (w * 0.38).clamp(0, 520),
+                  height: 2.0,
+                  width: _ruleExpand.value * maxWidth,
                   decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(1.0),
                     gradient: LinearGradient(
-                      colors: [accentColor, accentColor.withValues(alpha: 0)],
-                      begin: isArabic ? Alignment.centerRight : Alignment.centerLeft,
-                      end: isArabic ? Alignment.centerLeft : Alignment.centerRight,
+                      colors: isArabic
+                          ? [Colors.transparent, accentColor]
+                          : [accentColor, Colors.transparent],
                     ),
                   ),
                 ),
@@ -433,16 +576,17 @@ class _ExperienceSectionState extends State<ExperienceSection>
           ),
         ),
 
+        // Subtitle Narrative
         FadeTransition(
           opacity: _subtitleFade,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 640),
+            constraints: const BoxConstraints(maxWidth: 680),
             child: Text(
               l10n.expSectionSubtitle,
               textAlign: isArabic ? TextAlign.right : TextAlign.left,
               style: GoogleFonts.outfit(
                 fontSize: 15.5,
-                height: 1.75,
+                height: 1.72,
                 color: bodyText,
                 fontWeight: FontWeight.w400,
               ),
@@ -452,285 +596,1089 @@ class _ExperienceSectionState extends State<ExperienceSection>
       ],
     );
   }
-}
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Chapter Divider
-// ─────────────────────────────────────────────────────────────────────────────
+  // ───────────────────────────────────────────────────────────────────────────
+  // Filter Tabs Bar
+  // ───────────────────────────────────────────────────────────────────────────
 
-class _ChapterDivider extends StatelessWidget {
-  const _ChapterDivider({
-    required this.tag,
-    required this.title,
-    required this.isDark,
-    required this.isArabic,
-    required this.accentColor,
-  });
+  Widget _buildFilterBar(
+    AppLocalizations l10n,
+    bool isDark,
+    bool isArabic,
+    Color accentColor,
+  ) {
+    final filters = [
+      (0, l10n.expFilterAll),
+      (1, l10n.expFilterProfessional),
+      (2, l10n.expFilterTeaching),
+      (3, l10n.expFilterTraining),
+    ];
 
-  final String tag;
-  final String title;
-  final bool isDark;
-  final bool isArabic;
-  final Color accentColor;
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      alignment: isArabic ? WrapAlignment.end : WrapAlignment.start,
+      children: filters.map((item) {
+        final (index, label) = item;
+        final selected = _selectedFilter == index;
 
-  @override
-  Widget build(BuildContext context) {
-    final lineColor = isDark
-        ? AppColors.darkBorder.withValues(alpha: 0.55)
-        : AppColors.lightBorder.withValues(alpha: 0.65);
-
-    final labelColumn = Column(
-      crossAxisAlignment: isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          tag,
-          style: GoogleFonts.jetBrainsMono(
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 2.0,
-            color: accentColor.withValues(alpha: 0.7),
+        return InkWell(
+          onTap: () => setState(() => _selectedFilter = index),
+          borderRadius: BorderRadius.circular(20),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 220),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+            decoration: BoxDecoration(
+              color: selected
+                  ? accentColor.withValues(alpha: isDark ? 0.28 : 0.20)
+                  : (isDark
+                      ? AppColors.darkSurface.withValues(alpha: 0.60)
+                      : AppColors.lightSurface.withValues(alpha: 0.70)),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: selected
+                    ? accentColor
+                    : (isDark
+                        ? AppColors.darkBorder.withValues(alpha: 0.55)
+                        : AppColors.lightBorder.withValues(alpha: 0.65)),
+                width: selected ? 1.4 : 0.9,
+              ),
+              boxShadow: selected
+                  ? [
+                      BoxShadow(
+                        color: accentColor.withValues(alpha: 0.18),
+                        blurRadius: 12,
+                        offset: const Offset(0, 3),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (selected) ...[
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: accentColor,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                Text(
+                  label,
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                    color: selected
+                        ? (isDark ? AppColors.ivory : AppColors.deepPlum)
+                        : (isDark
+                            ? AppColors.ivory.withValues(alpha: 0.65)
+                            : AppColors.deepPlum.withValues(alpha: 0.65)),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 3),
-        Text(
-          title,
-          style: GoogleFonts.outfit(
-            fontSize: 13.5,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.3,
-            color: isDark
-                ? AppColors.ivory.withValues(alpha: 0.5)
-                : AppColors.deepPlum.withValues(alpha: 0.5),
-          ),
-        ),
-      ],
+        );
+      }).toList(),
     );
+  }
 
-    final line = Expanded(
-      child: Container(
-        height: 1.0,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: isArabic
-                ? [Colors.transparent, lineColor]
-                : [lineColor, Colors.transparent],
-          ),
-        ),
+  // ───────────────────────────────────────────────────────────────────────────
+  // Desktop Alternating Milestone Row
+  // ───────────────────────────────────────────────────────────────────────────
+
+  Widget _buildDesktopMilestoneRow({
+    required TimelineMilestone milestone,
+    required int index,
+    required bool isFirst,
+    required bool isLast,
+    required bool isHovered,
+    required bool isDark,
+    required bool isArabic,
+    required Color primaryText,
+    required Color secondaryText,
+    required Color bodyText,
+    required Color accentColor,
+    required double pulseProgress,
+  }) {
+    final categoryAccent = _getCategoryAccent(milestone.category, isDark);
+    final cardIsOnLeft = index.isEven;
+
+    final cardWidget = MouseRegion(
+      onEnter: (_) => setState(() => _hoveredIndex = index),
+      onExit: (_) => setState(() => _hoveredIndex = -1),
+      child: _MilestoneCard(
+        milestone: milestone,
+        isDark: isDark,
+        isArabic: isArabic,
+        isHovered: isHovered,
+        primaryText: primaryText,
+        secondaryText: secondaryText,
+        bodyText: bodyText,
+        categoryAccent: categoryAccent,
       ),
     );
 
-    return Row(
-      children: isArabic
-          ? [line, const SizedBox(width: 20), labelColumn]
-          : [labelColumn, const SizedBox(width: 20), line],
+    final dateWidget = MouseRegion(
+      onEnter: (_) => setState(() => _hoveredIndex = index),
+      onExit: (_) => setState(() => _hoveredIndex = -1),
+      child: _OppositeDateBadge(
+        period: milestone.period,
+        duration: milestone.duration,
+        isDateNotSpecified: milestone.isDateNotSpecified,
+        alignLeft: !cardIsOnLeft,
+        categoryAccent: categoryAccent,
+        isDark: isDark,
+        isArabic: isArabic,
+        isHovered: isHovered,
+      ),
+    );
+
+    final spineNode = _TimelineSpineNode(
+      milestone: milestone,
+      isFirst: isFirst,
+      isLast: isLast,
+      isHovered: isHovered,
+      isDark: isDark,
+      isArabic: isArabic,
+      categoryAccent: categoryAccent,
+      pulseProgress: pulseProgress,
+      cardIsOnLeft: cardIsOnLeft,
+      isMobile: false,
+      nodeYOffset: 34.0,
+      onHover: (hovered) => setState(() => _hoveredIndex = hovered ? index : -1),
+    );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final halfWidth = (constraints.maxWidth - 72.0) / 2.0;
+
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            // 1. Primary Height-Determining Child: The Milestone Card
+            // The card lays out with finite width = halfWidth and unconstrained height.
+            // Stack adopts this exact height naturally.
+            Padding(
+              padding: EdgeInsets.only(
+                left: cardIsOnLeft ? 0.0 : (halfWidth + 72.0),
+                right: cardIsOnLeft ? (halfWidth + 72.0) : 0.0,
+                bottom: 32.0,
+              ),
+              child: Align(
+                alignment: cardIsOnLeft ? Alignment.topRight : Alignment.topLeft,
+                child: cardWidget,
+              ),
+            ),
+
+            // 2. Central Continuous Spine (Positioned from top to bottom of card + 32px margin)
+            Positioned(
+              top: 0,
+              bottom: 0,
+              left: halfWidth,
+              width: 72.0,
+              child: spineNode,
+            ),
+
+            // 3. Opposite Date Badge (Positioned at top of opposite column)
+            Positioned(
+              top: 0,
+              bottom: 32.0,
+              left: cardIsOnLeft ? (halfWidth + 72.0) : 0.0,
+              width: halfWidth,
+              child: Align(
+                alignment: cardIsOnLeft ? Alignment.topLeft : Alignment.topRight,
+                child: dateWidget,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // Mobile / Tablet Single-Sided Milestone Row
+  // ───────────────────────────────────────────────────────────────────────────
+
+  Widget _buildMobileMilestoneRow({
+    required TimelineMilestone milestone,
+    required int index,
+    required bool isFirst,
+    required bool isLast,
+    required bool isHovered,
+    required bool isDark,
+    required bool isCompact,
+    required bool isArabic,
+    required Color primaryText,
+    required Color secondaryText,
+    required Color bodyText,
+    required Color accentColor,
+    required double pulseProgress,
+  }) {
+    final categoryAccent = _getCategoryAccent(milestone.category, isDark);
+
+    final spineNode = _TimelineSpineNode(
+      milestone: milestone,
+      isFirst: isFirst,
+      isLast: isLast,
+      isHovered: isHovered,
+      isDark: isDark,
+      isArabic: isArabic,
+      categoryAccent: categoryAccent,
+      pulseProgress: pulseProgress,
+      cardIsOnLeft: false, // in single-sided layout, card is always to the trailing side
+      isMobile: true,
+      nodeYOffset: 28.0,
+      onHover: (hovered) => setState(() => _hoveredIndex = hovered ? index : -1),
+    );
+
+    final cardWidget = MouseRegion(
+      onEnter: (_) => setState(() => _hoveredIndex = index),
+      onExit: (_) => setState(() => _hoveredIndex = -1),
+      child: _MilestoneCard(
+        milestone: milestone,
+        isDark: isDark,
+        isArabic: isArabic,
+        isHovered: isHovered,
+        primaryText: primaryText,
+        secondaryText: secondaryText,
+        bodyText: bodyText,
+        categoryAccent: categoryAccent,
+      ),
+    );
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        // 1. Primary Height-Determining Child: The Milestone Card
+        Padding(
+          padding: EdgeInsets.only(
+            left: isArabic ? 0.0 : 48.0,
+            right: isArabic ? 48.0 : 0.0,
+            bottom: 28.0,
+          ),
+          child: cardWidget,
+        ),
+
+        // 2. Spine Column (Positioned to match card height + 28px bottom margin)
+        Positioned(
+          top: 0,
+          bottom: 0,
+          left: isArabic ? null : 0.0,
+          right: isArabic ? 0.0 : null,
+          width: 48.0,
+          child: spineNode,
+        ),
+      ],
+    );
+  }
+
+  Color _getCategoryAccent(ExperienceCategory category, bool isDark) {
+    switch (category) {
+      case ExperienceCategory.professional:
+        return const Color(0xFF8B5E83); // Mauve Plum
+      case ExperienceCategory.teaching:
+        return const Color(0xFF6B8FB2); // Slate Azure
+      case ExperienceCategory.mentorship:
+        return const Color(0xFF6A9984); // Sage Rose
+      case ExperienceCategory.leadership:
+        return const Color(0xFF9E6B8E); // Radiant Orchid Plum
+      case ExperienceCategory.training:
+        return const Color(0xFFB8860B).withValues(alpha: isDark ? 0.90 : 1.0); // Amber Ochre
+      case ExperienceCategory.development:
+        return const Color(0xFF8A6EA8); // Deep Lavender Plum
+    }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Timeline Spine Node & Continuous Connecting Line Custom Painter
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _TimelineSpineNode extends StatelessWidget {
+  const _TimelineSpineNode({
+    required this.milestone,
+    required this.isFirst,
+    required this.isLast,
+    required this.isHovered,
+    required this.isDark,
+    required this.isArabic,
+    required this.categoryAccent,
+    required this.pulseProgress,
+    required this.cardIsOnLeft,
+    required this.isMobile,
+    required this.nodeYOffset,
+    required this.onHover,
+  });
+
+  final TimelineMilestone milestone;
+  final bool isFirst;
+  final bool isLast;
+  final bool isHovered;
+  final bool isDark;
+  final bool isArabic;
+  final Color categoryAccent;
+  final double pulseProgress;
+  final bool cardIsOnLeft;
+  final bool isMobile;
+  final double nodeYOffset;
+  final ValueChanged<bool> onHover;
+
+  @override
+  Widget build(BuildContext context) {
+    final columnWidth = isMobile ? 48.0 : 72.0;
+    final centerX = columnWidth / 2;
+    final nodeRadius = isMobile ? 14.0 : 18.0;
+
+    return RepaintBoundary(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          CustomPaint(
+            painter: _SpineConnectingLinePainter(
+              centerX: centerX,
+              nodeY: nodeYOffset,
+              nodeRadius: nodeRadius,
+              isFirst: isFirst,
+              isLast: isLast,
+              isHovered: isHovered,
+              cardIsOnLeft: cardIsOnLeft,
+              isMobile: isMobile,
+              isArabic: isArabic,
+              categoryAccent: categoryAccent,
+              isDark: isDark,
+              pulseProgress: pulseProgress,
+              itemIndex: milestone.id,
+            ),
+          ),
+          Positioned(
+            top: nodeYOffset - nodeRadius,
+            left: centerX - nodeRadius,
+            width: nodeRadius * 2,
+            height: nodeRadius * 2,
+            child: MouseRegion(
+              onEnter: (_) => onHover(true),
+              onExit: (_) => onHover(false),
+              cursor: SystemMouseCursors.click,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                width: nodeRadius * 2,
+                height: nodeRadius * 2,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isDark ? AppColors.darkSurfaceVariant : Colors.white,
+                  border: Border.all(
+                    color: isHovered
+                        ? categoryAccent
+                        : categoryAccent.withValues(alpha: isDark ? 0.65 : 0.50),
+                    width: isHovered ? 2.2 : 1.6,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: categoryAccent.withValues(alpha: isHovered ? 0.45 : 0.20),
+                      blurRadius: isHovered ? 16 : 8,
+                      spreadRadius: isHovered ? 2 : 0,
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Icon(
+                    milestone.icon ?? Icons.circle_rounded,
+                    size: isMobile ? 14 : 17,
+                    color: isHovered ? categoryAccent : categoryAccent.withValues(alpha: 0.90),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Experience Card
+// Spine Connecting Line Custom Painter (Continuous, Seamless, and Pulsing)
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _ExperienceCard extends StatefulWidget {
-  const _ExperienceCard({
-    required this.entry,
+class _SpineConnectingLinePainter extends CustomPainter {
+  _SpineConnectingLinePainter({
+    required this.centerX,
+    required this.nodeY,
+    required this.nodeRadius,
+    required this.isFirst,
+    required this.isLast,
+    required this.isHovered,
+    required this.cardIsOnLeft,
+    required this.isMobile,
+    required this.isArabic,
+    required this.categoryAccent,
+    required this.isDark,
+    required this.pulseProgress,
+    required this.itemIndex,
+  });
+
+  final double centerX;
+  final double nodeY;
+  final double nodeRadius;
+  final bool isFirst;
+  final bool isLast;
+  final bool isHovered;
+  final bool cardIsOnLeft;
+  final bool isMobile;
+  final bool isArabic;
+  final Color categoryAccent;
+  final bool isDark;
+  final double pulseProgress;
+  final int itemIndex;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final baseLineColor = isDark
+        ? AppColors.darkBorder.withValues(alpha: 0.70)
+        : AppColors.lightBorder.withValues(alpha: 0.85);
+
+    final spinePaint = Paint()
+      ..color = baseLineColor
+      ..strokeWidth = 2.0
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+
+    // 1. Draw Vertical Spine Line Segment
+    // For middle items: line goes from top (y=0) to bottom (y=height), passing through the node.
+    // For the first item: line starts at node center and extends down to bottom.
+    // For the last item: line starts at top and ends at node center.
+    final startY = isFirst ? nodeY : 0.0;
+    final endY = isLast ? nodeY : size.height;
+
+    canvas.drawLine(
+      Offset(centerX, startY),
+      Offset(centerX, endY),
+      spinePaint,
+    );
+
+    // 2. Traveling Light Pulse along this vertical segment
+    // Calculate fractional progression for this item (itemIndex 1..7 maps to 0.0 .. 1.0)
+    final itemFraction = (itemIndex - 1) / 7.0;
+    final pulseDistance = (pulseProgress - itemFraction).abs();
+
+    if (pulseDistance < 0.22) {
+      final pulseAlpha = (1.0 - (pulseDistance / 0.22)) * (isDark ? 0.85 : 0.70);
+      final pulsePaint = Paint()
+        ..color = categoryAccent.withValues(alpha: pulseAlpha)
+        ..strokeWidth = 2.8
+        ..strokeCap = StrokeCap.round;
+
+      final pStart = (startY + (nodeY - startY) * 0.2).clamp(startY, endY);
+      final pEnd = (nodeY + (endY - nodeY) * 0.8).clamp(startY, endY);
+
+      canvas.drawLine(
+        Offset(centerX, pStart),
+        Offset(centerX, pEnd),
+        pulsePaint,
+      );
+    }
+
+    // 3. Horizontal Connecting Branch to the Milestone Card
+    final branchPaint = Paint()
+      ..color = isHovered
+          ? categoryAccent.withValues(alpha: 0.90)
+          : categoryAccent.withValues(alpha: isDark ? 0.35 : 0.30)
+      ..strokeWidth = isHovered ? 1.8 : 1.2
+      ..strokeCap = StrokeCap.round;
+
+    if (isMobile) {
+      if (isArabic) {
+        // In Arabic RTL mobile: spine is on the right, card is on the left
+        final branchStartX = centerX - nodeRadius;
+        const branchEndX = 0.0;
+        canvas.drawLine(
+          Offset(branchStartX, nodeY),
+          Offset(branchEndX, nodeY),
+          branchPaint,
+        );
+
+        canvas.drawCircle(
+          Offset(branchEndX, nodeY),
+          isHovered ? 2.5 : 1.8,
+          branchPaint..style = PaintingStyle.fill,
+        );
+      } else {
+        // In English LTR mobile: spine is on the left, card is on the right
+        final branchStartX = centerX + nodeRadius;
+        final branchEndX = size.width;
+        canvas.drawLine(
+          Offset(branchStartX, nodeY),
+          Offset(branchEndX, nodeY),
+          branchPaint,
+        );
+
+        // Terminal micro-anchor dot at branch connection
+        canvas.drawCircle(
+          Offset(branchEndX, nodeY),
+          isHovered ? 2.5 : 1.8,
+          branchPaint..style = PaintingStyle.fill,
+        );
+      }
+    } else {
+      // In desktop alternating mode:
+      if (cardIsOnLeft) {
+        // Card is to the left of the spine
+        final branchStartX = centerX - nodeRadius;
+        const branchEndX = 0.0;
+        canvas.drawLine(
+          Offset(branchStartX, nodeY),
+          Offset(branchEndX, nodeY),
+          branchPaint,
+        );
+
+        canvas.drawCircle(
+          Offset(branchEndX, nodeY),
+          isHovered ? 2.8 : 2.0,
+          branchPaint..style = PaintingStyle.fill,
+        );
+      } else {
+        // Card is to the right of the spine
+        final branchStartX = centerX + nodeRadius;
+        final branchEndX = size.width;
+        canvas.drawLine(
+          Offset(branchStartX, nodeY),
+          Offset(branchEndX, nodeY),
+          branchPaint,
+        );
+
+        canvas.drawCircle(
+          Offset(branchEndX, nodeY),
+          isHovered ? 2.8 : 2.0,
+          branchPaint..style = PaintingStyle.fill,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _SpineConnectingLinePainter oldDelegate) {
+    return oldDelegate.pulseProgress != pulseProgress ||
+        oldDelegate.isHovered != isHovered ||
+        oldDelegate.isDark != isDark ||
+        oldDelegate.isArabic != isArabic;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Milestone Card (Rich, Interactive, Structured, Fully Visible)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _MilestoneCard extends StatelessWidget {
+  const _MilestoneCard({
+    required this.milestone,
     required this.isDark,
     required this.isArabic,
-    required this.isDesktop,
-    required this.isCompact,
+    required this.isHovered,
     required this.primaryText,
     required this.secondaryText,
     required this.bodyText,
+    required this.categoryAccent,
   });
 
-  final ExperienceEntry entry;
+  final TimelineMilestone milestone;
   final bool isDark;
   final bool isArabic;
-  final bool isDesktop;
-  final bool isCompact;
+  final bool isHovered;
   final Color primaryText;
   final Color secondaryText;
   final Color bodyText;
+  final Color categoryAccent;
 
-  @override
-  State<_ExperienceCard> createState() => _ExperienceCardState();
-}
-
-class _ExperienceCardState extends State<_ExperienceCard> {
-  bool _hovered = false;
-
-  Color get _typeAccent => switch (widget.entry.type) {
-        ExperienceType.leadership => const Color(0xFF8B6A9B),
-        ExperienceType.instruction => const Color(0xFF5B7FA0),
-        ExperienceType.mentorship => const Color(0xFF5B8A70),
-        ExperienceType.internship => const Color(0xFF704C67),
-        ExperienceType.training => const Color(0xFF8B7A5A),
-        ExperienceType.initiative => const Color(0xFF6B5B9A),
-      };
-
-  String _typeLabel(AppLocalizations l10n) => switch (widget.entry.type) {
-        ExperienceType.leadership => l10n.expTypeLeadership,
-        ExperienceType.instruction => l10n.expTypeInstruction,
-        ExperienceType.mentorship => l10n.expTypeMentorship,
-        ExperienceType.internship => l10n.expTypeInternship,
-        ExperienceType.training => l10n.expTypeTraining,
-        ExperienceType.initiative => l10n.expTypeInitiative,
-      };
+  String _getCategoryLabel(AppLocalizations l10n, ExperienceCategory cat) {
+    switch (cat) {
+      case ExperienceCategory.professional:
+        return l10n.expTypeInternship;
+      case ExperienceCategory.teaching:
+        return l10n.expTypeInstruction;
+      case ExperienceCategory.mentorship:
+        return l10n.expTypeMentorship;
+      case ExperienceCategory.leadership:
+        return l10n.expTypeLeadership;
+      case ExperienceCategory.training:
+        return l10n.expTypeTraining;
+      case ExperienceCategory.development:
+        return l10n.expTypeInitiative;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final ta = _typeAccent;
+    final categoryLabel = _getCategoryLabel(l10n, milestone.category);
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOutCubic,
-        transform: Matrix4.translationValues(0, _hovered ? -4.0 : 0.0, 0),
-        decoration: BoxDecoration(
-          color: widget.isDark
-              ? (_hovered ? AppColors.darkSurfaceVariant : AppColors.darkSurface)
-              : (_hovered ? const Color(0xFFEAE0E7) : AppColors.lightSurface),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: _hovered
-                ? ta.withValues(alpha: 0.5)
-                : (widget.isDark
-                    ? AppColors.darkBorder.withValues(alpha: 0.65)
-                    : AppColors.lightBorder.withValues(alpha: 0.70)),
-            width: 1.2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: (widget.isDark ? Colors.black : AppColors.deepPlum)
-                  .withValues(alpha: _hovered ? 0.22 : 0.06),
-              blurRadius: _hovered ? 28 : 10,
-              offset: Offset(0, _hovered ? 10 : 3),
-            ),
-            if (_hovered)
-              BoxShadow(
-                color: ta.withValues(alpha: 0.12),
-                blurRadius: 40,
-                offset: const Offset(0, 8),
-              ),
-          ],
-        ),
-        child: widget.isDesktop
-            ? _buildDesktopLayout(l10n, ta)
-            : _buildMobileLayout(l10n, ta),
-      ),
-    );
-  }
+    final cardBg = isDark
+        ? (isHovered ? AppColors.darkSurfaceVariant : AppColors.darkSurface)
+        : (isHovered ? const Color(0xFFF3EBF0) : AppColors.lightSurface);
 
-  Widget _buildDesktopLayout(AppLocalizations l10n, Color ta) {
-    final strip = AnimatedContainer(
-      duration: const Duration(milliseconds: 250),
-      width: 3.5,
+    final borderColor = isHovered
+        ? categoryAccent.withValues(alpha: 0.65)
+        : (isDark
+            ? AppColors.darkBorder.withValues(alpha: 0.60)
+            : AppColors.lightBorder.withValues(alpha: 0.70));
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 240),
+      curve: Curves.easeOutCubic,
+      transform: Matrix4.translationValues(0, isHovered ? -4.0 : 0.0, 0),
+      constraints: const BoxConstraints(maxWidth: 580),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
       decoration: BoxDecoration(
-        color: _hovered ? ta : ta.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.only(
-          topLeft: widget.isArabic ? Radius.zero : const Radius.circular(20),
-          bottomLeft: widget.isArabic ? Radius.zero : const Radius.circular(20),
-          topRight: widget.isArabic ? const Radius.circular(20) : Radius.zero,
-          bottomRight: widget.isArabic ? const Radius.circular(20) : Radius.zero,
-        ),
+        color: cardBg,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: borderColor, width: isHovered ? 1.4 : 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: (isDark ? Colors.black : AppColors.deepPlum)
+                .withValues(alpha: isHovered ? 0.22 : 0.06),
+            blurRadius: isHovered ? 26 : 10,
+            offset: Offset(0, isHovered ? 8 : 3),
+          ),
+          if (isHovered)
+            BoxShadow(
+              color: categoryAccent.withValues(alpha: 0.14),
+              blurRadius: 32,
+              offset: const Offset(0, 4),
+            ),
+        ],
       ),
-    );
-
-    final metaWidth = 185.0;
-    final divider = Container(
-      width: 1.0,
-      color: widget.isDark
-          ? AppColors.darkBorder.withValues(alpha: 0.45)
-          : AppColors.lightBorder.withValues(alpha: 0.55),
-    );
-
-    final content = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 24),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: widget.isArabic
-              ? [
-                  Expanded(child: _ContentPanel(entry: widget.entry, isDark: widget.isDark, isArabic: widget.isArabic, typeAccent: ta, primaryText: widget.primaryText, bodyText: widget.bodyText)),
-                  const SizedBox(width: 22),
-                  divider,
-                  const SizedBox(width: 22),
-                  SizedBox(width: metaWidth, child: _MetaPanel(entry: widget.entry, isDark: widget.isDark, isArabic: widget.isArabic, typeAccent: ta, typeLabel: _typeLabel(l10n), secondaryText: widget.secondaryText)),
-                ]
-              : [
-                  SizedBox(width: metaWidth, child: _MetaPanel(entry: widget.entry, isDark: widget.isDark, isArabic: widget.isArabic, typeAccent: ta, typeLabel: _typeLabel(l10n), secondaryText: widget.secondaryText)),
-                  const SizedBox(width: 22),
-                  divider,
-                  const SizedBox(width: 26),
-                  Expanded(child: _ContentPanel(entry: widget.entry, isDark: widget.isDark, isArabic: widget.isArabic, typeAccent: ta, primaryText: widget.primaryText, bodyText: widget.bodyText)),
-                ],
-        ),
-      ),
-    );
-
-    return IntrinsicHeight(
-      child: widget.isArabic
-          ? Row(children: [content, strip])
-          : Row(children: [strip, content]),
-    );
-  }
-
-  Widget _buildMobileLayout(AppLocalizations l10n, Color ta) {
-    return Padding(
-      padding: EdgeInsets.all(widget.isCompact ? 18.0 : 22.0),
       child: Column(
-        crossAxisAlignment: widget.isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            mainAxisAlignment: widget.isArabic ? MainAxisAlignment.end : MainAxisAlignment.start,
+          // ── Row 1: Category Badge + Date Badge (if mobile) ──────────
+          Wrap(
+            spacing: 8,
+            runSpacing: 6,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            alignment: isArabic ? WrapAlignment.end : WrapAlignment.start,
             children: [
-              if (!widget.isArabic && widget.entry.icon != null) ...[
-                Container(
-                  width: 34, height: 34,
-                  decoration: BoxDecoration(color: ta.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
-                  child: Icon(widget.entry.icon, size: 17, color: ta),
+              _CategoryBadge(
+                label: categoryLabel,
+                color: categoryAccent,
+                icon: milestone.icon,
+              ),
+              if (milestone.period.isNotEmpty)
+                _PeriodBadge(
+                  period: milestone.period,
+                  isDateNotSpecified: milestone.isDateNotSpecified,
+                  color: secondaryText,
+                  accentColor: categoryAccent,
+                  isDark: isDark,
                 ),
-                const SizedBox(width: 10),
-              ],
-              _TypeBadge(label: _typeLabel(l10n), color: ta),
-              if (widget.isArabic && widget.entry.icon != null) ...[
-                const SizedBox(width: 10),
-                Container(
-                  width: 34, height: 34,
-                  decoration: BoxDecoration(color: ta.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
-                  child: Icon(widget.entry.icon, size: 17, color: ta),
+              if (milestone.duration != null)
+                _DurationBadge(
+                  duration: milestone.duration!,
+                  color: categoryAccent,
                 ),
-              ],
             ],
           ),
+
           const SizedBox(height: 14),
-          _ContentPanel(
-            entry: widget.entry,
-            isDark: widget.isDark,
-            isArabic: widget.isArabic,
-            typeAccent: ta,
-            primaryText: widget.primaryText,
-            bodyText: widget.bodyText,
+
+          // ── Row 2: Role Title ────────────────────────────────────────
+          Text(
+            milestone.role,
+            textAlign: isArabic ? TextAlign.right : TextAlign.left,
+            style: isArabic
+                ? GoogleFonts.amiri(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: primaryText,
+                    height: 1.3,
+                  )
+                : GoogleFonts.outfit(
+                    fontSize: 18.5,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.2,
+                    color: primaryText,
+                    height: 1.25,
+                  ),
           ),
-          if (widget.entry.period.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Text(
-              widget.entry.period,
-              style: GoogleFonts.jetBrainsMono(fontSize: 11, color: widget.secondaryText, letterSpacing: 0.8),
+
+          const SizedBox(height: 6),
+
+          // ── Row 3: Organization ──────────────────────────────────────
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: isArabic
+                ? [
+                    Flexible(
+                      child: Text(
+                        milestone.organization,
+                        textAlign: TextAlign.right,
+                        style: GoogleFonts.outfit(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600,
+                          color: categoryAccent,
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Icon(Icons.apartment_rounded, size: 14, color: categoryAccent),
+                  ]
+                : [
+                    Icon(Icons.apartment_rounded, size: 14, color: categoryAccent),
+                    const SizedBox(width: 6),
+                    Flexible(
+                      child: Text(
+                        milestone.organization,
+                        style: GoogleFonts.outfit(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600,
+                          color: categoryAccent,
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                    ),
+                  ],
+          ),
+
+          const SizedBox(height: 14),
+
+          // ── Row 4: Description (Structured Tracks or Bullet Points) ──
+          if (milestone.technicalTrackDesc != null && milestone.nonTechnicalTrackDesc != null)
+            _buildStructuredTracksBlock(milestone, isDark, isArabic, primaryText, bodyText, categoryAccent)
+          else
+            _buildBulletPointsBlock(milestone.descriptionPoints, isArabic, bodyText, categoryAccent),
+
+          const SizedBox(height: 16),
+
+          // ── Row 5: Skill & Topic Chips ───────────────────────────────
+          Wrap(
+            spacing: 8,
+            runSpacing: 7,
+            alignment: isArabic ? WrapAlignment.end : WrapAlignment.start,
+            children: milestone.tags.map((tag) {
+              return _SkillChip(
+                label: tag,
+                isDark: isDark,
+                accentColor: categoryAccent,
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBulletPointsBlock(
+    List<String> points,
+    bool isArabic,
+    Color bodyText,
+    Color accentColor,
+  ) {
+    return Column(
+      crossAxisAlignment: isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: points.map((point) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 7.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: isArabic
+                ? [
+                    Expanded(
+                      child: Text(
+                        point,
+                        textAlign: TextAlign.right,
+                        style: GoogleFonts.outfit(
+                          fontSize: 14,
+                          height: 1.62,
+                          color: bodyText,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Container(
+                        width: 5,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: accentColor.withValues(alpha: 0.85),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                  ]
+                : [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Container(
+                        width: 5,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: accentColor.withValues(alpha: 0.85),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        point,
+                        style: GoogleFonts.outfit(
+                          fontSize: 14,
+                          height: 1.62,
+                          color: bodyText,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildStructuredTracksBlock(
+    TimelineMilestone milestone,
+    bool isDark,
+    bool isArabic,
+    Color primaryText,
+    Color bodyText,
+    Color categoryAccent,
+  ) {
+    return Column(
+      crossAxisAlignment: isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: [
+        // Technical Track Block
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: categoryAccent.withValues(alpha: isDark ? 0.08 : 0.06),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: categoryAccent.withValues(alpha: 0.22),
+              width: 0.9,
             ),
-          ],
-          if (widget.entry.duration != null) ...[
-            const SizedBox(height: 6),
+          ),
+          child: Column(
+            crossAxisAlignment: isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: isArabic
+                    ? [
+                        Text(
+                          milestone.technicalTrackTitle ?? '',
+                          style: GoogleFonts.outfit(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: categoryAccent,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Icon(Icons.code_rounded, size: 14, color: categoryAccent),
+                      ]
+                    : [
+                        Icon(Icons.code_rounded, size: 14, color: categoryAccent),
+                        const SizedBox(width: 6),
+                        Text(
+                          milestone.technicalTrackTitle ?? '',
+                          style: GoogleFonts.outfit(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: categoryAccent,
+                          ),
+                        ),
+                      ],
+              ),
+              const SizedBox(height: 5),
+              Text(
+                milestone.technicalTrackDesc ?? '',
+                textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                style: GoogleFonts.outfit(
+                  fontSize: 13.5,
+                  height: 1.58,
+                  color: bodyText,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 10),
+
+        // Non-Technical Track Block
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: categoryAccent.withValues(alpha: isDark ? 0.05 : 0.04),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: categoryAccent.withValues(alpha: 0.16),
+              width: 0.8,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: isArabic
+                    ? [
+                        Text(
+                          milestone.nonTechnicalTrackTitle ?? '',
+                          style: GoogleFonts.outfit(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: categoryAccent,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Icon(Icons.psychology_rounded, size: 14, color: categoryAccent),
+                      ]
+                    : [
+                        Icon(Icons.psychology_rounded, size: 14, color: categoryAccent),
+                        const SizedBox(width: 6),
+                        Text(
+                          milestone.nonTechnicalTrackTitle ?? '',
+                          style: GoogleFonts.outfit(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: categoryAccent,
+                          ),
+                        ),
+                      ],
+              ),
+              const SizedBox(height: 5),
+              Text(
+                milestone.nonTechnicalTrackDesc ?? '',
+                textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                style: GoogleFonts.outfit(
+                  fontSize: 13.5,
+                  height: 1.58,
+                  color: bodyText,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Desktop Opposite Date & Period Badge (Balanced Column)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _OppositeDateBadge extends StatelessWidget {
+  const _OppositeDateBadge({
+    required this.period,
+    required this.duration,
+    required this.isDateNotSpecified,
+    required this.alignLeft,
+    required this.categoryAccent,
+    required this.isDark,
+    required this.isArabic,
+    required this.isHovered,
+  });
+
+  final String period;
+  final String? duration;
+  final bool isDateNotSpecified;
+  final bool alignLeft;
+  final Color categoryAccent;
+  final bool isDark;
+  final bool isArabic;
+  final bool isHovered;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 24.0),
+      child: Column(
+        crossAxisAlignment: alignLeft ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 220),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+            decoration: BoxDecoration(
+              color: isHovered
+                  ? categoryAccent.withValues(alpha: isDark ? 0.22 : 0.16)
+                  : (isDark
+                      ? AppColors.darkSurface.withValues(alpha: 0.70)
+                      : AppColors.lightSurface.withValues(alpha: 0.85)),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isHovered
+                    ? categoryAccent.withValues(alpha: 0.65)
+                    : (isDark
+                        ? AppColors.darkBorder.withValues(alpha: 0.60)
+                        : AppColors.lightBorder.withValues(alpha: 0.65)),
+                width: 1.0,
+              ),
+              boxShadow: isHovered
+                  ? [
+                      BoxShadow(
+                        color: categoryAccent.withValues(alpha: 0.16),
+                        blurRadius: 14,
+                        offset: const Offset(0, 3),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  isDateNotSpecified ? Icons.history_edu_rounded : Icons.calendar_today_rounded,
+                  size: 13,
+                  color: categoryAccent,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  period,
+                  style: GoogleFonts.jetBrainsMono(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.6,
+                    color: isDark ? AppColors.ivory : AppColors.deepPlum,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (duration != null) ...[
+            const SizedBox(height: 8),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(color: ta.withValues(alpha: 0.10), borderRadius: BorderRadius.circular(4)),
-              child: Text(
-                widget.entry.duration!,
-                style: GoogleFonts.jetBrainsMono(fontSize: 10, fontWeight: FontWeight.w600, color: ta),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: categoryAccent.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: categoryAccent.withValues(alpha: 0.35), width: 0.8),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.schedule_rounded, size: 12, color: categoryAccent),
+                  const SizedBox(width: 6),
+                  Text(
+                    duration!,
+                    style: GoogleFonts.jetBrainsMono(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: categoryAccent,
+                      letterSpacing: 0.4,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -741,203 +1689,164 @@ class _ExperienceCardState extends State<_ExperienceCard> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Meta Panel
+// Badges & Micro-Widgets
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _MetaPanel extends StatelessWidget {
-  const _MetaPanel({
-    required this.entry,
-    required this.isDark,
-    required this.isArabic,
-    required this.typeAccent,
-    required this.typeLabel,
-    required this.secondaryText,
+class _CategoryBadge extends StatelessWidget {
+  const _CategoryBadge({
+    required this.label,
+    required this.color,
+    this.icon,
   });
 
-  final ExperienceEntry entry;
-  final bool isDark;
-  final bool isArabic;
-  final Color typeAccent;
-  final String typeLabel;
-  final Color secondaryText;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (entry.icon != null) ...[
-          Container(
-            width: 40, height: 40,
-            decoration: BoxDecoration(
-              color: typeAccent.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(entry.icon, size: 20, color: typeAccent),
-          ),
-          const SizedBox(height: 12),
-        ],
-        _TypeBadge(label: typeLabel, color: typeAccent),
-        const SizedBox(height: 12),
-        if (entry.period.isNotEmpty)
-          Text(
-            entry.period,
-            style: GoogleFonts.jetBrainsMono(
-              fontSize: 11.5,
-              color: secondaryText,
-              letterSpacing: 0.8,
-              height: 1.4,
-            ),
-          ),
-        if (entry.duration != null) ...[
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(
-              color: typeAccent.withValues(alpha: 0.10),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              entry.duration!,
-              style: GoogleFonts.jetBrainsMono(
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                color: typeAccent,
-                letterSpacing: 0.6,
-              ),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Content Panel
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _ContentPanel extends StatelessWidget {
-  const _ContentPanel({
-    required this.entry,
-    required this.isDark,
-    required this.isArabic,
-    required this.typeAccent,
-    required this.primaryText,
-    required this.bodyText,
-  });
-
-  final ExperienceEntry entry;
-  final bool isDark;
-  final bool isArabic;
-  final Color typeAccent;
-  final Color primaryText;
-  final Color bodyText;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      children: [
-        Text(
-          entry.role,
-          textAlign: isArabic ? TextAlign.right : TextAlign.left,
-          style: GoogleFonts.outfit(
-            fontSize: 17.5,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -0.2,
-            height: 1.25,
-            color: primaryText,
-          ),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          entry.organization,
-          textAlign: isArabic ? TextAlign.right : TextAlign.left,
-          style: GoogleFonts.outfit(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 0.2,
-            color: typeAccent,
-          ),
-        ),
-        const SizedBox(height: 14),
-        Text(
-          entry.description,
-          textAlign: isArabic ? TextAlign.right : TextAlign.left,
-          style: GoogleFonts.outfit(
-            fontSize: 14.5,
-            height: 1.72,
-            color: bodyText,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          alignment: isArabic ? WrapAlignment.end : WrapAlignment.start,
-          children: entry.tags.map((tag) => _SkillChip(label: tag, isDark: isDark)).toList(),
-        ),
-      ],
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Type Badge
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _TypeBadge extends StatelessWidget {
-  const _TypeBadge({required this.label, required this.color});
   final String label;
+  final Color color;
+  final IconData? icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withValues(alpha: 0.35), width: 0.8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: 12, color: color),
+            const SizedBox(width: 5),
+          ],
+          Text(
+            label,
+            style: GoogleFonts.jetBrainsMono(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: color,
+              letterSpacing: 1.2,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PeriodBadge extends StatelessWidget {
+  const _PeriodBadge({
+    required this.period,
+    required this.isDateNotSpecified,
+    required this.color,
+    required this.accentColor,
+    required this.isDark,
+  });
+
+  final String period;
+  final bool isDateNotSpecified;
+  final Color color;
+  final Color accentColor;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+      decoration: BoxDecoration(
+        color: isDark
+            ? AppColors.darkSurfaceVariant.withValues(alpha: 0.65)
+            : AppColors.lightSurfaceVariant.withValues(alpha: 0.70),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(
+          color: isDark
+              ? AppColors.darkBorder.withValues(alpha: 0.55)
+              : AppColors.lightBorder.withValues(alpha: 0.60),
+          width: 0.8,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isDateNotSpecified ? Icons.history_edu_rounded : Icons.calendar_today_rounded,
+            size: 11,
+            color: color,
+          ),
+          const SizedBox(width: 5),
+          Text(
+            period,
+            style: GoogleFonts.jetBrainsMono(
+              fontSize: 10.5,
+              fontWeight: FontWeight.w500,
+              color: color,
+              letterSpacing: 0.4,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DurationBadge extends StatelessWidget {
+  const _DurationBadge({required this.duration, required this.color});
+  final String duration;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3.5),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color.withValues(alpha: 0.30), width: 0.8),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withValues(alpha: 0.32), width: 0.8),
       ),
-      child: Text(
-        label,
-        style: GoogleFonts.jetBrainsMono(
-          fontSize: 9.5,
-          fontWeight: FontWeight.w700,
-          color: color,
-          letterSpacing: 1.4,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.schedule_rounded, size: 11, color: color),
+          const SizedBox(width: 4),
+          Text(
+            duration,
+            style: GoogleFonts.jetBrainsMono(
+              fontSize: 10.5,
+              fontWeight: FontWeight.w700,
+              color: color,
+              letterSpacing: 0.4,
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Skill Chip
-// ─────────────────────────────────────────────────────────────────────────────
-
 class _SkillChip extends StatelessWidget {
-  const _SkillChip({required this.label, required this.isDark});
+  const _SkillChip({
+    required this.label,
+    required this.isDark,
+    required this.accentColor,
+  });
+
   final String label;
   final bool isDark;
+  final Color accentColor;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.5),
       decoration: BoxDecoration(
         color: isDark
-            ? AppColors.darkSurfaceVariant.withValues(alpha: 0.75)
-            : AppColors.lightSurfaceVariant.withValues(alpha: 0.80),
-        borderRadius: BorderRadius.circular(20),
+            ? AppColors.darkSurfaceVariant.withValues(alpha: 0.70)
+            : AppColors.lightSurfaceVariant.withValues(alpha: 0.75),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDark
-              ? AppColors.darkBorder.withValues(alpha: 0.60)
-              : AppColors.lightBorder.withValues(alpha: 0.65),
+              ? AppColors.darkBorder.withValues(alpha: 0.55)
+              : AppColors.lightBorder.withValues(alpha: 0.60),
           width: 0.8,
         ),
       ),
@@ -947,8 +1856,8 @@ class _SkillChip extends StatelessWidget {
           fontSize: 12,
           fontWeight: FontWeight.w500,
           color: isDark
-              ? AppColors.ivory.withValues(alpha: 0.78)
-              : AppColors.deepPlum.withValues(alpha: 0.76),
+              ? AppColors.ivory.withValues(alpha: 0.82)
+              : AppColors.deepPlum.withValues(alpha: 0.80),
         ),
       ),
     );
@@ -956,7 +1865,7 @@ class _SkillChip extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Section Bottom Divider
+// Architectural Section Bottom Divider
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _SectionBottomDivider extends StatelessWidget {
@@ -966,20 +1875,47 @@ class _SectionBottomDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = isDark
-        ? AppColors.darkBorder.withValues(alpha: 0.40)
-        : AppColors.lightBorder.withValues(alpha: 0.50);
+        ? AppColors.darkBorder.withValues(alpha: 0.50)
+        : AppColors.lightBorder.withValues(alpha: 0.60);
+
     return Stack(
       alignment: Alignment.center,
       children: [
-        Container(height: 1.0, color: c),
-        Container(width: 6, height: 6, decoration: BoxDecoration(color: c, shape: BoxShape.circle)),
+        Container(
+          height: 1.0,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.transparent,
+                c,
+                c,
+                Colors.transparent,
+              ],
+              stops: const [0.0, 0.2, 0.8, 1.0],
+            ),
+          ),
+        ),
+        Container(
+          width: 7,
+          height: 7,
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.dustyRose : AppColors.mauve,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: (isDark ? AppColors.dustyRose : AppColors.mauve).withValues(alpha: 0.4),
+                blurRadius: 6,
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Visibility Trigger — fires once when widget enters viewport (reliable)
+// Viewport Visibility Trigger (Reliable, one-shot scroll activation)
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _VisibilityTrigger extends StatefulWidget {
@@ -997,26 +1933,31 @@ class _VisibilityTriggerState extends State<_VisibilityTrigger> {
   @override
   void initState() {
     super.initState();
-    // Check after first frame is laid out
-    WidgetsBinding.instance.addPostFrameCallback((_) => _check());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkVisibility());
   }
 
-  void _check() {
+  void _checkVisibility() {
     if (_fired || !mounted) return;
     final box = context.findRenderObject() as RenderBox?;
-    if (box == null || !box.hasSize) return;
-    final pos = box.localToGlobal(Offset.zero);
-    final screenH = MediaQuery.sizeOf(context).height;
-    if (pos.dy < screenH + 200) {
-      _fired = true;
-      widget.onVisible();
-    }
+    if (box == null || !box.attached || !box.hasSize) return;
+
+    try {
+      final pos = box.localToGlobal(Offset.zero);
+      final screenH = MediaQuery.sizeOf(context).height;
+
+      // Trigger reveal as soon as element nears the bottom of the viewport
+      if (pos.dy < screenH + 180) {
+        _fired = true;
+        widget.onVisible();
+      }
+    } catch (_) {}
   }
 
   @override
   Widget build(BuildContext context) {
-    // Schedule check every time the widget rebuilds (e.g., due to scroll)
-    WidgetsBinding.instance.addPostFrameCallback((_) => _check());
+    if (!_fired) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _checkVisibility());
+    }
     return widget.child;
   }
 }

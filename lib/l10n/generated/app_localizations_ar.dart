@@ -230,14 +230,35 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navMenuClose => 'إغلاق قائمة التنقل';
 
   @override
-  String get expSectionTag => '٠٣ // الخبرات والمسيرة';
+  String get expSectionTag => '٠٣ // الخبرات والتدريب';
 
   @override
-  String get expSectionHeading => 'مسيرة من النمو';
+  String get expSectionHeading => 'الخبرات والتدريب';
 
   @override
   String get expSectionSubtitle =>
-      'من بناء تطبيقات Flutter حتى التدريس والإرشاد وقيادة المجتمعات التقنية — خيط متواصل من الإتقان والعطاء والتطور.';
+      'رحلة من البناء والتدريس والتعلّم والمساهمة في مجتمع Flutter.';
+
+  @override
+  String get expFilterAll => 'كل المحطات';
+
+  @override
+  String get expFilterProfessional => 'الخبرات المهنية والقيادة';
+
+  @override
+  String get expFilterTeaching => 'التدريس والإرشاد';
+
+  @override
+  String get expFilterTraining => 'التدريب التقني';
+
+  @override
+  String get expDateNotSpecified => 'التاريخ غير محدد';
+
+  @override
+  String get expTechTrackTitle => 'المسار التقني';
+
+  @override
+  String get expNonTechTrackTitle => 'المسار غير التقني';
 
   @override
   String get expChapterATag => 'الفصل الأول';
@@ -252,25 +273,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get expChapterBTitle => 'الهندسة والتعلم';
 
   @override
-  String get expTypeLeadership => 'قيادة';
+  String get expTypeLeadership => 'قيادة ومجتمع';
 
   @override
-  String get expTypeInstruction => 'تدريس';
+  String get expTypeInstruction => 'تدريس وإرشاد';
 
   @override
-  String get expTypeMentorship => 'إرشاد';
+  String get expTypeMentorship => 'إرشاد ومجتمع';
 
   @override
-  String get expTypeInternship => 'تدريب مهني';
+  String get expTypeInternship => 'خبرة مهنية';
 
   @override
-  String get expTypeTraining => 'تدريب';
+  String get expTypeTraining => 'تدريب تقني';
 
   @override
-  String get expTypeInitiative => 'مبادرة';
+  String get expTypeInitiative => 'تطوير تقني ومهني';
 
   @override
-  String get expEntry1Role => 'رئيس — دائرة Flutter';
+  String get expEntry1Role => 'رئيس دائرة Flutter';
 
   @override
   String get expEntry1Org => 'IEEE Mansoura Computer Society Chapter';
@@ -280,60 +301,60 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get expEntry1Desc =>
-      'شاركت بفاعلية في دائرة Flutter، وساهمت في النقاشات التقنية وتنظيم الأنشطة ودعم الفعاليات المتعلقة بتطوير Flutter ضمن فصل IEEE لعلوم الحاسبات بالمنصورة.';
+      'شاركت بفاعلية في دائرة Flutter، مساهمةً في المناقشات والأنشطة والفعاليات المتعلقة بتطوير تطبيقات Flutter.';
 
   @override
   String get expEntry1Tag1 => 'دائرة Flutter';
 
   @override
-  String get expEntry1Tag2 => 'مجتمع تقني';
+  String get expEntry1Tag2 => 'قيادة مجتمعية';
 
   @override
   String get expEntry1Tag3 => 'فعاليات تقنية';
 
   @override
-  String get expEntry2Role => 'مدربة Flutter';
+  String get expEntry2Role => 'مدربة Flutter — معسكر Flutter';
 
   @override
-  String get expEntry2Org => 'BreakinPoint Team — Flutter Bootcamp';
+  String get expEntry2Org => 'BreakinPoint Team';
 
   @override
   String get expEntry2Period => '٢٠٢٥';
 
   @override
   String get expEntry2Desc =>
-      'قادت معسكراً تدريبياً لـ Flutter مدته شهر ونصف، أرشدت فيه المشاركين من أساسيات Flutter حتى تطوير المشروع النهائي، مع تقديم تدريب عملي ومتابعة ودعم فردي طوال المعسكر.';
+      'قادت معسكراً تدريبياً لـ Flutter مدته شهر ونصف، أرشدت فيه المشاركين من الأساسيات حتى تطوير المشروع النهائي، مع تقديم تدريب عملي ومتابعة ودعم فردي طوال فترة المعسكر.';
 
   @override
-  String get expEntry2Tag1 => 'معسكر تدريبي';
+  String get expEntry2Tag1 => 'معسكر تدريبي (شهر ونصف)';
 
   @override
-  String get expEntry2Tag2 => 'أساسيات Flutter';
+  String get expEntry2Tag2 => 'تدريب عملي';
 
   @override
   String get expEntry2Tag3 => 'توجيه المشاريع';
 
   @override
-  String get expEntry3Role => 'مدربة Flutter';
+  String get expEntry3Role => 'مدربة Flutter — Technical Gates 5';
 
   @override
-  String get expEntry3Org => 'Technical Gates 5 — CIS Team';
+  String get expEntry3Org => 'CIS Team';
 
   @override
   String get expEntry3Period => '٢٠٢٤ – ٢٠٢٥';
 
   @override
   String get expEntry3Desc =>
-      'قدمت جلسات وأرشدت الطلاب في مسار Flutter ضمن برنامج Technical Gates 5 بتنظيم من CIS Team، وساعدت المشاركين على استيعاب مفاهيم Flutter وتطبيقها في مشاريع عملية مصغرة.';
+      'قدّمت جلسات تعليمية وأرشدت الطلاب في مسار Flutter كجزء من برنامج Technical Gates 5 بتنظيم من فريق CIS، وساعدت المشاركين على فهم مفاهيم Flutter الأساسية وتطبيقها في مشاريع عملية مصغرة.';
 
   @override
-  String get expEntry3Tag1 => 'تدريس';
+  String get expEntry3Tag1 => 'تقديم المناهج';
 
   @override
-  String get expEntry3Tag2 => 'مشاريع مصغرة';
+  String get expEntry3Tag2 => 'المفاهيم الأساسية';
 
   @override
-  String get expEntry3Tag3 => 'CIS Team';
+  String get expEntry3Tag3 => 'مشاريع مصغرة';
 
   @override
   String get expEntry4Role => 'مرشدة Flutter';
@@ -346,16 +367,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get expEntry4Desc =>
-      'دعمت الأعضاء الجدد في فهم مفاهيم Flutter وحل مشاكل البرمجة، وساهمت في تنظيم جلسات التعلم وإرشاد الطلاب خلال المشاريع والمهام.';
+      'دعمت الأعضاء الجدد في فهم مفاهيم Flutter وحل المشكلات البرمجية، وساهمت في تنظيم الجلسات التعليمية وإرشاد الطلاب خلال المشاريع والمهام.';
 
   @override
-  String get expEntry4Tag1 => 'إرشاد فردي';
+  String get expEntry4Tag1 => 'إرشاد الأعضاء الجدد';
 
   @override
   String get expEntry4Tag2 => 'حل المشكلات';
 
   @override
-  String get expEntry4Tag3 => 'تبادل المعرفة';
+  String get expEntry4Tag3 => 'جلسات تعليمية';
 
   @override
   String get expEntry5Role => 'مطورة Flutter — متدربة';
@@ -368,7 +389,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get expEntry5Desc =>
-      'طورت وصانت تطبيقات موبايل باستخدام Flutter وDart، ونفذت واجهات مستخدم نظيفة وقابلة للتوسع وفق مبادئ التصميم الحديثة، مع ربط RESTful APIs وإدارة الحالة وتحسين الأداء ضمن فريق عمل متعاون.';
+      '• طوّرت وصانت تطبيقات هواتف محمولة باستخدام Flutter وDart.\n• نفّذت واجهات مستخدم نظيفة وقابلة للتوسع وفق مبادئ التصميم الحديثة.\n• ربطت واجهات برمجة التطبيقات RESTful وأدارت حالة التطبيق بكفاءة.\n• استكشفت الأخطاء البرمجية وحسّنت أداء التطبيق لتوفير تجربة مستخدم سلسة.\n• تعاونت ضمن فريق عمل يتبع أفضل الممارسات وأنظمة التحكم في الإصدارات.';
 
   @override
   String get expEntry5Tag1 => 'Flutter و Dart';
@@ -380,10 +401,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get expEntry5Tag3 => 'إدارة الحالة';
 
   @override
-  String get expEntry5Tag4 => 'Git';
+  String get expEntry5Tag4 => 'Git وأفضل الممارسات';
 
   @override
-  String get expEntry6Role => 'متدربة Flutter';
+  String get expEntry6Role => 'متدربة Flutter — التدريب الشتوي ITI';
 
   @override
   String get expEntry6Org => 'معهد تكنولوجيا المعلومات (ITI)';
@@ -392,40 +413,261 @@ class AppLocalizationsAr extends AppLocalizations {
   String get expEntry6Period => 'يناير ٢٠٢٥';
 
   @override
-  String get expEntry6Duration => '٦٠ ساعة';
+  String get expEntry6Duration => '٦٠ ساعة تدريبية';
 
   @override
   String get expEntry6Desc =>
-      'أتممت تدريباً منظماً في Flutter يشمل الـ Widgets وتصميم الواجهات، وربط APIs ومعالجة البيانات، وتقنيات إدارة الحالة، ومقدمة للعمل الحر وتخطيط المشاريع الواقعية.';
+      'أتمّت تدريباً عملياً في Flutter شمل:\n• بناء الـ Widgets وتصميم واجهات المستخدم.\n• ربط APIs ومعالجة البيانات.\n• تقنيات إدارة الحالة.\n• مقدمة إلى العمل الحر وتخطيط المشاريع الواقعية.';
 
   @override
-  String get expEntry6Tag1 => 'الـ Widgets وواجهات المستخدم';
+  String get expEntry6Tag1 => 'تصميم الواجهات والـ Widgets';
 
   @override
   String get expEntry6Tag2 => 'ربط APIs';
 
   @override
-  String get expEntry6Tag3 => 'أساسيات العمل الحر';
+  String get expEntry6Tag3 => 'إدارة الحالة';
 
   @override
-  String get expEntry7Role => 'متدربة — مسار التطبيقات متعددة المنصات';
+  String get expEntry6Tag4 => 'أساسيات العمل الحر';
 
   @override
-  String get expEntry7Org => 'مبادرة رواد مصر الرقمية (DEPI)';
+  String get expEntry7Role => 'مبادرة رواد مصر الرقمية (DEPI)';
+
+  @override
+  String get expEntry7Org =>
+      'مبادرة رواد مصر الرقمية (DEPI) — وزارة الاتصالات وتكنولوجيا المعلومات';
 
   @override
   String get expEntry7Period => 'يونيو ٢٠٢٥';
 
   @override
   String get expEntry7Desc =>
-      'تدرس مسار التطبيقات متعددة المنصات باستخدام Flutter للتركيز على بناء تطبيقات موبايل قابلة للتوسع، بالتوازي مع جلسات المهارات الناعمة وأساسيات العمل الحر والتواصل والتطوير الوظيفي.';
+      '• المسار التقني: دراسة مسار التطبيقات متعددة المنصات باستخدام Flutter، مع التركيز على بناء تطبيقات موبايل قابلة للتوسع.\n• المسار غير التقني: المشاركة في جلسات المهارات الشخصية (Soft Skills)، وأساسيات العمل الحر، ومهارات التواصل والتطوير الوظيفي.';
 
   @override
-  String get expEntry7Tag1 => 'تطبيقات متعددة المنصات';
+  String get expEntry7Tag1 => 'مسار التطبيقات متعددة المنصات';
 
   @override
-  String get expEntry7Tag2 => 'تطبيقات موبايل';
+  String get expEntry7Tag2 => 'تطبيقات قابلة للتوسع';
 
   @override
-  String get expEntry7Tag3 => 'التطوير المهني';
+  String get expEntry7Tag3 => 'المهارات الناعمة والعمل الحر';
+
+  @override
+  String get expEntry7Tag4 => 'التطوير الوظيفي';
+
+  @override
+  String get projectsSectionTag => '04 // الأعمال والمشاريع المختارة';
+
+  @override
+  String get projectsSectionHeading => 'المشاريع المميزة';
+
+  @override
+  String get projectsSectionSubtitle =>
+      'مجموعة مختارة من تطبيقات الهواتف الحقيقية، والحلول المدعومة بالذكاء الاصطناعي، وبنى فلاتر البرمجية المعتمدة للإنتاج.';
+
+  @override
+  String get projectsFilterAll => 'جميع المشاريع';
+
+  @override
+  String get projectsFilterAi => 'ذكاء اصطناعي وصحة';
+
+  @override
+  String get projectsFilterCommunity => 'أثر مجتمعي';
+
+  @override
+  String get projectsFilterPlatforms => 'منصات وشركات ناشئة';
+
+  @override
+  String get projectFeaturedBadge => 'مشروع رئيسي مميز';
+
+  @override
+  String get projectGithubBtn => 'عرض على GitHub';
+
+  @override
+  String get projectSourceCodeTooltip => 'فتح مستودع الكود على GitHub';
+
+  @override
+  String get projectComingSoon => 'قريبًا';
+
+  @override
+  String get projectPlayStoreBtn => 'Google Play';
+
+  @override
+  String get projectAppStoreBtn => 'App Store';
+
+  @override
+  String get projectStoreInactiveTooltip =>
+      'التطبيق سيتوفر قريبًا على المتاجر الرسمية';
+
+  @override
+  String get projectKeyContributions => 'أبرز الإسهامات والمميزات:';
+
+  @override
+  String get projectVerifiedTech => 'التقنيات المستخدمة:';
+
+  @override
+  String get projectNutrimindTitle =>
+      'NutriMind — تطبيق التغذية والصحة النفسية';
+
+  @override
+  String get projectNutrimindCategory => 'ذكاء اصطناعي ورعاية صحية';
+
+  @override
+  String get projectNutrimindDesc =>
+      'رفيق ذكي للتغذية والصحة النفسية مطور بفلاتر، يجمع بين التحليل الذكي للوجبات بالذكاء الاصطناعي، وتتبع العناصر الغذائية، والنصائح اليومية، ومساعد محادثة تفاعلي في تجربة واحدة مخصصة.';
+
+  @override
+  String get projectNutrimindFeature1 =>
+      'فحص الوجبات بالذكاء الاصطناعي (Groq AI) وحساب فوري للسعرات والماكروز';
+
+  @override
+  String get projectNutrimindFeature2 =>
+      'تسجيل وجبات الإفطار والغداء والعشاء مع لوحة بيانات غذائية متكاملة';
+
+  @override
+  String get projectNutrimindFeature3 =>
+      'مزامنة سحابية بفايرستور (Cloud Firestore) ومصادقة مستخدمين ودعم كامل للغتين';
+
+  @override
+  String get projectNutrimindFeature4 =>
+      'مساعد ذكاء اصطناعي تفاعلي وإرشادات يومية لتعزيز الصحة النفسية والغذائية';
+
+  @override
+  String get projectQootTitle => 'قوت — تطبيق التبرع بالطعام وحفظ النعمة';
+
+  @override
+  String get projectQootCategory => 'عمل خيري وأثر مجتمعي';
+
+  @override
+  String get projectQootRole => 'مسؤولة وحدة الجمعيات الخيرية (فريق DEPI)';
+
+  @override
+  String get projectQootDesc =>
+      'تطوير وحدة الجمعيات الخيرية بالكامل لتطبيق \'قوت\' لحفظ الطعام باستخدام فلاتر وبنية Bloc/Cubit ضمن فريق DEPI متعدد التخصصات. شمل العمل تصفح التبرعات المتاحة، مسارات الحجز، إدارة الملف التعريفي للجمعية، وشاشات متجاوبة وفق مبادئ الـ Clean Architecture لتقليل هدر الطعام ودعم المنظمات الخيرية.';
+
+  @override
+  String get projectQootFeature1 =>
+      'بناء وحدة الجمعيات الخيرية ومسار حجز التبرعات بالكامل';
+
+  @override
+  String get projectQootFeature2 =>
+      'بنية معمارية نظيفة (Clean Architecture) وإدارة حالة بـ BLoC وربط REST APIs';
+
+  @override
+  String get projectQootFeature3 =>
+      'مبادرة واقعية لمكافحة هدر الطعام وتمكين المؤسسات الخيرية';
+
+  @override
+  String get projectSanadTitle => 'سند — منصة الخدمات والاستشارات القانونية';
+
+  @override
+  String get projectSanadCategory => 'استشارات وخدمات قانونية';
+
+  @override
+  String get projectSanadDesc =>
+      'تطوير تطبيق هاتف يربط العملاء بالمحامين للاستشارات القانونية والتمثيل القضائي عبر منصة سلسة وموثوقة. يتيح التطبيق تصفح المحامين حسب الخبرة والتقييم والأسعار، عرض ملفاتهم المهنية، والتواصل المباشر، بالإضافة إلى روبوت محادثة مدعوم بالذكاء الاصطناعي للمساعدة في تحليل القضايا وتوفير المراجع القانونية المشابهة.';
+
+  @override
+  String get projectSanadFeature1 =>
+      'استكشاف ذكي للمحامين، ملفات موثقة وتقييمات حقيقية للمستخدمين';
+
+  @override
+  String get projectSanadFeature2 =>
+      'حجز الاستشارات القانونية ومتابعة التمثيل القضائي بسهولة وأمان';
+
+  @override
+  String get projectSanadFeature3 =>
+      'مساعد ذكاء اصطناعي لتحليل القضايا واستخراج المراجع القانونية المشابهة';
+
+  @override
+  String get projectRafeeqTitle => 'رفيق — منصة رواد الأعمال والمستثمرين';
+
+  @override
+  String get projectRafeeqCategory => 'ريادة الأعمال والاستثمار';
+
+  @override
+  String get projectRafeeqDesc =>
+      'تطوير تطبيق هاتف يربط أصحاب المشاريع الناشئة بالمستثمرين لدعم الأفكار وفرص التمويل من خلال منصة تفاعلية. يمكّن رواد الأعمال من استعراض مشاريعهم ويتيح للمستثمرين البحث والتصفية حسب مجالات الاهتمام، مما يسهل تجربة الاستثمار والتعاون المشترك.';
+
+  @override
+  String get projectRafeeqFeature1 =>
+      'عرض المشاريع الناشئة ومسار تقديم تفاعلي متعدد الخطوات لرواد الأعمال';
+
+  @override
+  String get projectRafeeqFeature2 =>
+      'أدوات تصفية وبحث متقدمة للمستثمرين لاستكشاف الفرص الاستثمارية الواعدة';
+
+  @override
+  String get projectRafeeqFeature3 =>
+      'قنوات تواصل وتفاعل مباشرة وسلسة بين رواد الأعمال وجهات التمويل';
+
+  @override
+  String get contactSectionTag => '05 // تواصل معي';
+
+  @override
+  String get contactSectionHeading => 'دعنا نتواصل';
+
+  @override
+  String get contactSectionSubtitle =>
+      'هل لديك فرصة عمل، فكرة مشروع، أو رغبة في التعاون؟ يسعدني دائمًا التواصل معك ومناقشة تفاصيل العمل معًا.';
+
+  @override
+  String get contactLocation => 'المنصورة، محافظة الدقهلية، مصر';
+
+  @override
+  String get contactEmailLabel => 'البريد الإلكتروني';
+
+  @override
+  String get contactPhoneLabel => 'الهاتف / واتساب';
+
+  @override
+  String get contactLinkedInLabel => 'الملف الشخصي على LinkedIn';
+
+  @override
+  String get contactGitHubLabel => 'مستودعات المشاريع على GitHub';
+
+  @override
+  String get contactCopyTooltip => 'نسخ إلى الحافظة';
+
+  @override
+  String get contactCopiedSnackbar => 'تم النسخ إلى الحافظة بنجاح!';
+
+  @override
+  String get contactSendEmailBtn => 'إرسال بريد إلكتروني';
+
+  @override
+  String get contactCallBtn => 'اتصال / مراسلة';
+
+  @override
+  String get contactViewProfileBtn => 'عرض الملف الشخصي';
+
+  @override
+  String get contactViewGithubBtn => 'استعراض المشاريع';
+
+  @override
+  String get contactAvailabilityBadge => 'متاحة لفرص العمل والمشاريع الجديدة';
+
+  @override
+  String get contactAvailabilityDesc =>
+      'مستعدة للانضمام لوظائف مطورة فلاتر بدوام كامل، العمل عن بُعد، والمشاريع البرمجية المبتكرة.';
+
+  @override
+  String get footerTagline =>
+      'مطورة فلاتر تبني تجارب هواتف ذكية، متقنة، ومصممة للتوسع والنمو.';
+
+  @override
+  String get footerQuickLinksTitle => 'التنقل السريع';
+
+  @override
+  String get footerSocialsTitle => 'شبكات التواصل';
+
+  @override
+  String footerCopyright(String year) {
+    return '© $year رميساء فاضل. جميع الحقوق محفوظة.';
+  }
+
+  @override
+  String get footerBackToTop => 'العودة للأعلى';
 }

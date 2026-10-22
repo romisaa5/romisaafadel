@@ -16,7 +16,14 @@ import 'hero_actions.dart';
 ///   • Responsive layout (horizontal on desktop, centered stacked on tablet & mobile).
 ///   • Bottom architectural divider line with center intersection dot.
 class HeroSection extends StatefulWidget {
-  const HeroSection({super.key});
+  const HeroSection({
+    super.key,
+    this.onViewWorkTap,
+    this.onGetInTouchTap,
+  });
+
+  final VoidCallback? onViewWorkTap;
+  final VoidCallback? onGetInTouchTap;
 
   @override
   State<HeroSection> createState() => _HeroSectionState();
@@ -98,17 +105,37 @@ class _HeroSectionState extends State<HeroSection>
 
   void _onPointerMove(PointerEvent event, BoxConstraints constraints) {
     if (!mounted) return;
-    final cx = constraints.maxWidth / 2;
-    final cy = constraints.maxHeight / 2;
-    final dx = ((event.localPosition.dx - cx) / cx).clamp(-1.0, 1.0);
-    final dy = ((event.localPosition.dy - cy) / cy).clamp(-1.0, 1.0);
-    setState(() {
-      _parallaxOffset = Offset(dx * _maxParallax, dy * _maxParallax);
-    });
+    final w = constraints.maxWidth;
+    if (w <= 0 || !w.isFinite) return;
+
+    final box = context.findRenderObject() as RenderBox?;
+    final h = (box != null && box.attached && box.hasSize && box.size.height > 0)
+        ? box.size.height
+        : (constraints.hasBoundedHeight && constraints.maxHeight.isFinite
+            ? constraints.maxHeight
+            : 650.0);
+
+    final cx = w / 2;
+    final cy = h / 2;
+
+    final rawDx = cx > 0 ? (event.localPosition.dx - cx) / cx : 0.0;
+    final rawDy = cy > 0 ? (event.localPosition.dy - cy) / cy : 0.0;
+
+    final dx = rawDx.isFinite ? rawDx.clamp(-1.0, 1.0) : 0.0;
+    final dy = rawDy.isFinite ? rawDy.clamp(-1.0, 1.0) : 0.0;
+
+    final nextOffset = Offset(dx * _maxParallax, dy * _maxParallax);
+    if ((nextOffset - _parallaxOffset).distanceSquared > 0.04) {
+      setState(() {
+        _parallaxOffset = nextOffset;
+      });
+    }
   }
 
   void _resetParallax() {
-    if (mounted) setState(() => _parallaxOffset = Offset.zero);
+    if (mounted && _parallaxOffset != Offset.zero) {
+      setState(() => _parallaxOffset = Offset.zero);
+    }
   }
 
   void _handleViewWork() {
@@ -139,37 +166,31 @@ class _HeroSectionState extends State<HeroSection>
               onPointerMove: enableParallax
                   ? (e) => _onPointerMove(e, constraints)
                   : null,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  // Hero layout content
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: isDesktop ? 48.0 : 24.0,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (isDesktop)
-                          _WideLayout(
-                            content: _buildContent(),
-                            visual: _buildVisual(isWide: true),
-                          )
-                        else
-                          _StackedLayout(
-                            content: _buildContent(),
-                            visual: _buildVisual(isWide: false),
-                            isMedium: context.isMedium,
-                          ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: isDesktop ? 48.0 : 24.0,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isDesktop)
+                      _WideLayout(
+                        content: _buildContent(),
+                        visual: _buildVisual(isWide: true),
+                      )
+                    else
+                      _StackedLayout(
+                        content: _buildContent(),
+                        visual: _buildVisual(isWide: false),
+                        isMedium: context.isMedium,
+                      ),
 
-                        const SizedBox(height: 56),
+                    const SizedBox(height: 56),
 
-                        // Architectural bottom divider line with center dot
-                        _SectionBottomDivider(isDark: isDark),
-                      ],
-                    ),
-                  ),
-                ],
+                    // Architectural bottom divider line with center dot
+                    _SectionBottomDivider(isDark: isDark),
+                  ],
+                ),
               ),
             ),
           ),
@@ -194,7 +215,8 @@ class _HeroSectionState extends State<HeroSection>
       HeroActions(
         opacity: _actionsOpacity.value,
         slideOffset: _actionsSlide.value,
-        onViewWorkTap: _handleViewWork,
+        onViewWorkTap: widget.onViewWorkTap ?? _handleViewWork,
+        onGetInTouchTap: widget.onGetInTouchTap,
       ),
     ],
   );

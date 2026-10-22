@@ -509,20 +509,62 @@ abstract class AppLocalizations {
   /// Experience section tag
   ///
   /// In en, this message translates to:
-  /// **'03 // EXPERIENCE & JOURNEY'**
+  /// **'03 // EXPERIENCE & TRAINING'**
   String get expSectionTag;
 
   /// Experience section main heading
   ///
   /// In en, this message translates to:
-  /// **'A Journey of Growth'**
+  /// **'Experience & Training'**
   String get expSectionHeading;
 
   /// Experience section subtitle
   ///
   /// In en, this message translates to:
-  /// **'From building production Flutter applications to teaching, mentoring, and leading technical communities — a continuous thread of craft, contribution, and growth.'**
+  /// **'A journey of building, teaching, learning, and contributing to the Flutter community.'**
   String get expSectionSubtitle;
+
+  /// Filter tab: All milestones
+  ///
+  /// In en, this message translates to:
+  /// **'All Milestones'**
+  String get expFilterAll;
+
+  /// Filter tab: Professional & Leadership
+  ///
+  /// In en, this message translates to:
+  /// **'Professional & Leadership'**
+  String get expFilterProfessional;
+
+  /// Filter tab: Teaching & Mentoring
+  ///
+  /// In en, this message translates to:
+  /// **'Teaching & Mentoring'**
+  String get expFilterTeaching;
+
+  /// Filter tab: Technical Training
+  ///
+  /// In en, this message translates to:
+  /// **'Technical Training'**
+  String get expFilterTraining;
+
+  /// Label for unstated dates
+  ///
+  /// In en, this message translates to:
+  /// **'Date not specified'**
+  String get expDateNotSpecified;
+
+  /// DEPI Technical Track title
+  ///
+  /// In en, this message translates to:
+  /// **'Technical Track'**
+  String get expTechTrackTitle;
+
+  /// DEPI Non-Technical Track title
+  ///
+  /// In en, this message translates to:
+  /// **'Non-Technical Track'**
+  String get expNonTechTrackTitle;
 
   /// Chapter A tag
   ///
@@ -551,37 +593,37 @@ abstract class AppLocalizations {
   /// Experience type: leadership
   ///
   /// In en, this message translates to:
-  /// **'LEADERSHIP'**
+  /// **'LEADERSHIP & COMMUNITY'**
   String get expTypeLeadership;
 
   /// Experience type: instruction
   ///
   /// In en, this message translates to:
-  /// **'INSTRUCTION'**
+  /// **'TEACHING & MENTORING'**
   String get expTypeInstruction;
 
   /// Experience type: mentorship
   ///
   /// In en, this message translates to:
-  /// **'MENTORSHIP'**
+  /// **'MENTORING & COMMUNITY'**
   String get expTypeMentorship;
 
   /// Experience type: internship
   ///
   /// In en, this message translates to:
-  /// **'INTERNSHIP'**
+  /// **'PROFESSIONAL EXPERIENCE'**
   String get expTypeInternship;
 
   /// Experience type: training
   ///
   /// In en, this message translates to:
-  /// **'TRAINING'**
+  /// **'TECHNICAL TRAINING'**
   String get expTypeTraining;
 
   /// Experience type: initiative
   ///
   /// In en, this message translates to:
-  /// **'INITIATIVE'**
+  /// **'TECHNICAL & PROFESSIONAL DEVELOPMENT'**
   String get expTypeInitiative;
 
   /// Entry 1 role
@@ -599,13 +641,13 @@ abstract class AppLocalizations {
   /// Entry 1 period
   ///
   /// In en, this message translates to:
-  /// **'2025 – 2026'**
+  /// **'2025–2026'**
   String get expEntry1Period;
 
   /// Entry 1 description
   ///
   /// In en, this message translates to:
-  /// **'Actively participated in the Flutter Circle, contributing to technical discussions, organizing activities, and supporting events related to Flutter development within the IEEE Mansoura CS Chapter.'**
+  /// **'Actively participated in the Flutter Circle, contributing to discussions, activities, and events related to Flutter development.'**
   String get expEntry1Desc;
 
   /// No description provided for @expEntry1Tag1.
@@ -617,7 +659,7 @@ abstract class AppLocalizations {
   /// No description provided for @expEntry1Tag2.
   ///
   /// In en, this message translates to:
-  /// **'Community'**
+  /// **'Community Leadership'**
   String get expEntry1Tag2;
 
   /// No description provided for @expEntry1Tag3.
@@ -629,13 +671,13 @@ abstract class AppLocalizations {
   /// Entry 2 role
   ///
   /// In en, this message translates to:
-  /// **'Flutter Instructor'**
+  /// **'Flutter Instructor — Flutter Bootcamp'**
   String get expEntry2Role;
 
   /// Entry 2 organization
   ///
   /// In en, this message translates to:
-  /// **'BreakinPoint Team — Flutter Bootcamp'**
+  /// **'BreakinPoint Team'**
   String get expEntry2Org;
 
   /// Entry 2 period
@@ -647,67 +689,67 @@ abstract class AppLocalizations {
   /// Entry 2 description
   ///
   /// In en, this message translates to:
-  /// **'Led a 1.5-month Flutter bootcamp, guiding participants from fundamentals to final project development. Provided hands-on training, follow-up sessions, and individual support throughout the camp.'**
+  /// **'Led a 1.5-month Flutter bootcamp, guiding participants from fundamentals to final project development. Provided hands-on training, follow-up, and individual support throughout the bootcamp.'**
   String get expEntry2Desc;
 
   /// No description provided for @expEntry2Tag1.
   ///
   /// In en, this message translates to:
-  /// **'Bootcamp'**
+  /// **'1.5-Month Bootcamp'**
   String get expEntry2Tag1;
 
   /// No description provided for @expEntry2Tag2.
   ///
   /// In en, this message translates to:
-  /// **'Flutter Fundamentals'**
+  /// **'Hands-on Training'**
   String get expEntry2Tag2;
 
   /// No description provided for @expEntry2Tag3.
   ///
   /// In en, this message translates to:
-  /// **'Project Guidance'**
+  /// **'Project Coaching'**
   String get expEntry2Tag3;
 
   /// Entry 3 role
   ///
   /// In en, this message translates to:
-  /// **'Flutter Instructor'**
+  /// **'Flutter Instructor — Technical Gates 5'**
   String get expEntry3Role;
 
   /// Entry 3 organization
   ///
   /// In en, this message translates to:
-  /// **'Technical Gates 5 — CIS Team'**
+  /// **'CIS Team'**
   String get expEntry3Org;
 
   /// Entry 3 period
   ///
   /// In en, this message translates to:
-  /// **'2024 – 2025'**
+  /// **'2024–2025'**
   String get expEntry3Period;
 
   /// Entry 3 description
   ///
   /// In en, this message translates to:
-  /// **'Delivered sessions and mentored students in the Flutter track as part of the Technical Gates 5 program. Helped participants grasp core Flutter concepts and apply them in practical mini-projects.'**
+  /// **'Delivered sessions and mentored students in the Flutter track as part of the Technical Gates 5 program organized by the CIS Team. Helped participants understand core Flutter concepts and apply them in practical mini-projects.'**
   String get expEntry3Desc;
 
   /// No description provided for @expEntry3Tag1.
   ///
   /// In en, this message translates to:
-  /// **'Teaching'**
+  /// **'Curriculum Delivery'**
   String get expEntry3Tag1;
 
   /// No description provided for @expEntry3Tag2.
   ///
   /// In en, this message translates to:
-  /// **'Mini-Projects'**
+  /// **'Core Concepts'**
   String get expEntry3Tag2;
 
   /// No description provided for @expEntry3Tag3.
   ///
   /// In en, this message translates to:
-  /// **'CIS Team'**
+  /// **'Mini-Projects'**
   String get expEntry3Tag3;
 
   /// Entry 4 role
@@ -719,13 +761,13 @@ abstract class AppLocalizations {
   /// Entry 4 organization
   ///
   /// In en, this message translates to:
-  /// **'CIS Team — Mansoura University'**
+  /// **'CIS Team, Mansoura University'**
   String get expEntry4Org;
 
   /// Entry 4 period
   ///
   /// In en, this message translates to:
-  /// **'2024 – 2025'**
+  /// **'2024–2025'**
   String get expEntry4Period;
 
   /// Entry 4 description
@@ -737,7 +779,7 @@ abstract class AppLocalizations {
   /// No description provided for @expEntry4Tag1.
   ///
   /// In en, this message translates to:
-  /// **'One-on-One Guidance'**
+  /// **'Junior Mentoring'**
   String get expEntry4Tag1;
 
   /// No description provided for @expEntry4Tag2.
@@ -749,7 +791,7 @@ abstract class AppLocalizations {
   /// No description provided for @expEntry4Tag3.
   ///
   /// In en, this message translates to:
-  /// **'Knowledge Sharing'**
+  /// **'Learning Sessions'**
   String get expEntry4Tag3;
 
   /// Entry 5 role
@@ -773,7 +815,7 @@ abstract class AppLocalizations {
   /// Entry 5 description
   ///
   /// In en, this message translates to:
-  /// **'Developed and maintained mobile applications using Flutter and Dart. Implemented clean, scalable UI following modern design principles. Integrated RESTful APIs, managed application state, debugged issues, and optimized performance — collaborating within a team using version control best practices.'**
+  /// **'• Developed and maintained mobile applications using Flutter and Dart.\n• Implemented clean and scalable UI following modern design principles.\n• Integrated RESTful APIs and managed application state.\n• Debugged issues and optimized app performance for a better user experience.\n• Collaborated within a team using best practices and version control.'**
   String get expEntry5Desc;
 
   /// No description provided for @expEntry5Tag1.
@@ -797,13 +839,13 @@ abstract class AppLocalizations {
   /// No description provided for @expEntry5Tag4.
   ///
   /// In en, this message translates to:
-  /// **'Git'**
+  /// **'Git & Best Practices'**
   String get expEntry5Tag4;
 
   /// Entry 6 role
   ///
   /// In en, this message translates to:
-  /// **'Flutter Trainee'**
+  /// **'Flutter Trainee — ITI Winter Internship'**
   String get expEntry6Role;
 
   /// Entry 6 organization
@@ -827,13 +869,13 @@ abstract class AppLocalizations {
   /// Entry 6 description
   ///
   /// In en, this message translates to:
-  /// **'Completed structured Flutter training covering widgets and UI design, API integration and data handling, state management techniques, and an introduction to freelancing and real-world project planning.'**
+  /// **'Completed practical Flutter training covering:\n• Flutter widgets and UI design.\n• API integration and data handling.\n• State management techniques.\n• Introduction to freelancing and real-world project planning.'**
   String get expEntry6Desc;
 
   /// No description provided for @expEntry6Tag1.
   ///
   /// In en, this message translates to:
-  /// **'Widgets & UI'**
+  /// **'Widgets & UI Design'**
   String get expEntry6Tag1;
 
   /// No description provided for @expEntry6Tag2.
@@ -845,19 +887,25 @@ abstract class AppLocalizations {
   /// No description provided for @expEntry6Tag3.
   ///
   /// In en, this message translates to:
-  /// **'Freelancing Basics'**
+  /// **'State Management'**
   String get expEntry6Tag3;
+
+  /// No description provided for @expEntry6Tag4.
+  ///
+  /// In en, this message translates to:
+  /// **'Freelancing Basics'**
+  String get expEntry6Tag4;
 
   /// Entry 7 role
   ///
   /// In en, this message translates to:
-  /// **'Cross Platform Track — Trainee'**
+  /// **'Digital Egypt Pioneers Initiative (DEPI)'**
   String get expEntry7Role;
 
   /// Entry 7 organization
   ///
   /// In en, this message translates to:
-  /// **'Digital Egypt Pioneers Initiative (DEPI)'**
+  /// **'DEPI — Ministry of Communications & Information Technology'**
   String get expEntry7Org;
 
   /// Entry 7 period
@@ -869,26 +917,410 @@ abstract class AppLocalizations {
   /// Entry 7 description
   ///
   /// In en, this message translates to:
-  /// **'Studying the Cross Platform track using Flutter, focusing on building scalable, multi-platform mobile applications. Concurrently participating in soft skills, freelancing basics, communication, and career development sessions.'**
+  /// **'• Technical Track: Studying the Cross Platform track using Flutter, focusing on building scalable, multi-platform mobile applications.\n• Non-Technical Track: Participating in sessions on soft skills, freelancing basics, communication, and career development.'**
   String get expEntry7Desc;
 
   /// No description provided for @expEntry7Tag1.
   ///
   /// In en, this message translates to:
-  /// **'Cross Platform'**
+  /// **'Cross Platform Track'**
   String get expEntry7Tag1;
 
   /// No description provided for @expEntry7Tag2.
   ///
   /// In en, this message translates to:
-  /// **'Multi-platform Apps'**
+  /// **'Scalable Applications'**
   String get expEntry7Tag2;
 
   /// No description provided for @expEntry7Tag3.
   ///
   /// In en, this message translates to:
-  /// **'Career Development'**
+  /// **'Soft Skills & Freelancing'**
   String get expEntry7Tag3;
+
+  /// No description provided for @expEntry7Tag4.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Development'**
+  String get expEntry7Tag4;
+
+  /// Projects section tag
+  ///
+  /// In en, this message translates to:
+  /// **'04 // FEATURED WORK & CASE STUDIES'**
+  String get projectsSectionTag;
+
+  /// Projects section heading
+  ///
+  /// In en, this message translates to:
+  /// **'Featured Projects'**
+  String get projectsSectionHeading;
+
+  /// Projects section subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'A curated selection of real-world mobile applications, AI-integrated solutions, and production Flutter architectures.'**
+  String get projectsSectionSubtitle;
+
+  /// Filter: All projects
+  ///
+  /// In en, this message translates to:
+  /// **'All Projects'**
+  String get projectsFilterAll;
+
+  /// Filter: AI & Health
+  ///
+  /// In en, this message translates to:
+  /// **'AI & Health'**
+  String get projectsFilterAi;
+
+  /// Filter: Social Impact
+  ///
+  /// In en, this message translates to:
+  /// **'Social Impact'**
+  String get projectsFilterCommunity;
+
+  /// Filter: Platforms
+  ///
+  /// In en, this message translates to:
+  /// **'Platforms'**
+  String get projectsFilterPlatforms;
+
+  /// Featured project badge
+  ///
+  /// In en, this message translates to:
+  /// **'FEATURED PROJECT'**
+  String get projectFeaturedBadge;
+
+  /// GitHub button label
+  ///
+  /// In en, this message translates to:
+  /// **'View on GitHub'**
+  String get projectGithubBtn;
+
+  /// Source code tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Open repository on GitHub'**
+  String get projectSourceCodeTooltip;
+
+  /// Coming soon badge
+  ///
+  /// In en, this message translates to:
+  /// **'Coming Soon'**
+  String get projectComingSoon;
+
+  /// Google Play button
+  ///
+  /// In en, this message translates to:
+  /// **'Google Play'**
+  String get projectPlayStoreBtn;
+
+  /// App Store button
+  ///
+  /// In en, this message translates to:
+  /// **'App Store'**
+  String get projectAppStoreBtn;
+
+  /// Store release coming soon tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Application store release coming soon'**
+  String get projectStoreInactiveTooltip;
+
+  /// Key contributions label
+  ///
+  /// In en, this message translates to:
+  /// **'Key Highlights:'**
+  String get projectKeyContributions;
+
+  /// Verified technologies label
+  ///
+  /// In en, this message translates to:
+  /// **'Technologies:'**
+  String get projectVerifiedTech;
+
+  /// NutriMind title
+  ///
+  /// In en, this message translates to:
+  /// **'NutriMind — Nutrition & Mental Wellness App'**
+  String get projectNutrimindTitle;
+
+  /// NutriMind category
+  ///
+  /// In en, this message translates to:
+  /// **'AI & Mental Wellbeing'**
+  String get projectNutrimindCategory;
+
+  /// NutriMind description
+  ///
+  /// In en, this message translates to:
+  /// **'An intelligent nutrition and mental-wellness companion built with Flutter, combining AI-powered meal analysis, nutritional tracking, daily wellness tips, and a conversational assistant in one personalized experience.'**
+  String get projectNutrimindDesc;
+
+  /// NutriMind feature 1
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered meal scanning & instant macronutrient breakdown (calories, protein, carbs, fat)'**
+  String get projectNutrimindFeature1;
+
+  /// NutriMind feature 2
+  ///
+  /// In en, this message translates to:
+  /// **'Breakfast, lunch, and dinner tracking with comprehensive nutrition dashboard'**
+  String get projectNutrimindFeature2;
+
+  /// NutriMind feature 3
+  ///
+  /// In en, this message translates to:
+  /// **'Meal history synced through Cloud Firestore & Firebase Authentication'**
+  String get projectNutrimindFeature3;
+
+  /// NutriMind feature 4
+  ///
+  /// In en, this message translates to:
+  /// **'Conversational AI nutrition assistant & daily mental wellness guidance'**
+  String get projectNutrimindFeature4;
+
+  /// Qoot title
+  ///
+  /// In en, this message translates to:
+  /// **'Qoot — Food Donation Application'**
+  String get projectQootTitle;
+
+  /// Qoot category
+  ///
+  /// In en, this message translates to:
+  /// **'Charity & Social Impact'**
+  String get projectQootCategory;
+
+  /// Qoot role
+  ///
+  /// In en, this message translates to:
+  /// **'Charity Module Lead (DEPI Team)'**
+  String get projectQootRole;
+
+  /// Qoot description
+  ///
+  /// In en, this message translates to:
+  /// **'Developed the complete Charity module for the Qoot food-donation application using Flutter and Bloc/Cubit architecture within a multidisciplinary DEPI team. Implemented core donation workflows, reservation tracking, charity profile management, and responsive Clean Architecture screens to reduce food waste and support charities.'**
+  String get projectQootDesc;
+
+  /// Qoot feature 1
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Charity Module & Donation Reservation Workflow'**
+  String get projectQootFeature1;
+
+  /// Qoot feature 2
+  ///
+  /// In en, this message translates to:
+  /// **'Clean Architecture, BLoC State Management & REST APIs'**
+  String get projectQootFeature2;
+
+  /// Qoot feature 3
+  ///
+  /// In en, this message translates to:
+  /// **'Real-world initiative to reduce food waste and empower charities'**
+  String get projectQootFeature3;
+
+  /// Sanad title
+  ///
+  /// In en, this message translates to:
+  /// **'Sanad — Legal Services Platform'**
+  String get projectSanadTitle;
+
+  /// Sanad category
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Tech & Advisory'**
+  String get projectSanadCategory;
+
+  /// Sanad description
+  ///
+  /// In en, this message translates to:
+  /// **'Developed a mobile application that connects clients with lawyers for legal consultations and case representation through a user-friendly platform. Enables browsing lawyers based on experience, education, pricing, and client reviews, viewing detailed lawyer profiles, and communicating seamlessly. Includes an AI-powered chatbot to assist users and support lawyers in analyzing cases and finding similar legal references.'**
+  String get projectSanadDesc;
+
+  /// Sanad feature 1
+  ///
+  /// In en, this message translates to:
+  /// **'Intelligent Lawyer Discovery, Verified Profiles & Client Reviews'**
+  String get projectSanadFeature1;
+
+  /// Sanad feature 2
+  ///
+  /// In en, this message translates to:
+  /// **'Seamless Legal Consultations & Case Representation Booking'**
+  String get projectSanadFeature2;
+
+  /// Sanad feature 3
+  ///
+  /// In en, this message translates to:
+  /// **'AI Legal Chatbot for Case Analysis & Reference Discovery'**
+  String get projectSanadFeature3;
+
+  /// Rafeeq title
+  ///
+  /// In en, this message translates to:
+  /// **'Rafeeq — Founder & Investor Platform'**
+  String get projectRafeeqTitle;
+
+  /// Rafeeq category
+  ///
+  /// In en, this message translates to:
+  /// **'Startups & Venture Capital'**
+  String get projectRafeeqCategory;
+
+  /// Rafeeq description
+  ///
+  /// In en, this message translates to:
+  /// **'Developed a mobile application connecting startup founders with investors to support startup ideas and funding opportunities through an interactive platform. Enables founders to showcase projects and allows investors to browse, filter, and discover vetted startup concepts based on interests, fostering smoother investment and collaboration.'**
+  String get projectRafeeqDesc;
+
+  /// Rafeeq feature 1
+  ///
+  /// In en, this message translates to:
+  /// **'Startup Pitch Showcase & Multi-Step Creation Wizard'**
+  String get projectRafeeqFeature1;
+
+  /// Rafeeq feature 2
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Filtering & Opportunity Discovery for Investors'**
+  String get projectRafeeqFeature2;
+
+  /// Rafeeq feature 3
+  ///
+  /// In en, this message translates to:
+  /// **'Direct Collaboration Channel Between Founders and Angels'**
+  String get projectRafeeqFeature3;
+
+  /// Contact section tag
+  ///
+  /// In en, this message translates to:
+  /// **'05 // GET IN TOUCH'**
+  String get contactSectionTag;
+
+  /// Contact section heading
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s Connect'**
+  String get contactSectionHeading;
+
+  /// Contact section subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Have an opportunity, a project idea, or a chance to collaborate? I\'d love to hear from you.'**
+  String get contactSectionSubtitle;
+
+  /// Contact location
+  ///
+  /// In en, this message translates to:
+  /// **'Mansoura, Dakahlia, Egypt'**
+  String get contactLocation;
+
+  /// Email label
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get contactEmailLabel;
+
+  /// Phone label
+  ///
+  /// In en, this message translates to:
+  /// **'Phone / WhatsApp'**
+  String get contactPhoneLabel;
+
+  /// LinkedIn label
+  ///
+  /// In en, this message translates to:
+  /// **'LinkedIn Profile'**
+  String get contactLinkedInLabel;
+
+  /// GitHub label
+  ///
+  /// In en, this message translates to:
+  /// **'GitHub Repositories'**
+  String get contactGitHubLabel;
+
+  /// Copy tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Copy to clipboard'**
+  String get contactCopyTooltip;
+
+  /// Copied snackbar
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard!'**
+  String get contactCopiedSnackbar;
+
+  /// Send email button
+  ///
+  /// In en, this message translates to:
+  /// **'Send an Email'**
+  String get contactSendEmailBtn;
+
+  /// Call button
+  ///
+  /// In en, this message translates to:
+  /// **'Call / Dial'**
+  String get contactCallBtn;
+
+  /// View profile button
+  ///
+  /// In en, this message translates to:
+  /// **'View Profile'**
+  String get contactViewProfileBtn;
+
+  /// Explore GitHub button
+  ///
+  /// In en, this message translates to:
+  /// **'Explore GitHub'**
+  String get contactViewGithubBtn;
+
+  /// Availability badge
+  ///
+  /// In en, this message translates to:
+  /// **'Available for New Opportunities'**
+  String get contactAvailabilityBadge;
+
+  /// Availability description
+  ///
+  /// In en, this message translates to:
+  /// **'Open to Full-time Flutter Developer positions, remote roles, and innovative freelance mobile projects.'**
+  String get contactAvailabilityDesc;
+
+  /// Footer tagline
+  ///
+  /// In en, this message translates to:
+  /// **'Flutter Developer building thoughtful, scalable mobile experiences.'**
+  String get footerTagline;
+
+  /// Footer navigation title
+  ///
+  /// In en, this message translates to:
+  /// **'Navigation'**
+  String get footerQuickLinksTitle;
+
+  /// Footer socials title
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get footerSocialsTitle;
+
+  /// Footer copyright
+  ///
+  /// In en, this message translates to:
+  /// **'© {year} Romisaa Fadel. All rights reserved.'**
+  String footerCopyright(String year);
+
+  /// Back to top button
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Top'**
+  String get footerBackToTop;
 }
 
 class _AppLocalizationsDelegate

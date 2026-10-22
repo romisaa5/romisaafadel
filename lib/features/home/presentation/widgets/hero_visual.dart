@@ -100,7 +100,11 @@ class _EditorialPortraitState extends State<_EditorialPortrait>
     final isDark = widget.isDark;
     final w = widget.width;
     final h = widget.height;
-    final p = widget.parallaxOffset;
+    final rawP = widget.parallaxOffset;
+    final p = Offset(
+      rawP.dx.isFinite ? rawP.dx : 0.0,
+      rawP.dy.isFinite ? rawP.dy : 0.0,
+    );
 
     return MouseRegion(
       onEnter: _onEnter,

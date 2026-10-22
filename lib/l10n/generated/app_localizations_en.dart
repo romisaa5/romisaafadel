@@ -230,14 +230,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navMenuClose => 'Close navigation menu';
 
   @override
-  String get expSectionTag => '03 // EXPERIENCE & JOURNEY';
+  String get expSectionTag => '03 // EXPERIENCE & TRAINING';
 
   @override
-  String get expSectionHeading => 'A Journey of Growth';
+  String get expSectionHeading => 'Experience & Training';
 
   @override
   String get expSectionSubtitle =>
-      'From building production Flutter applications to teaching, mentoring, and leading technical communities — a continuous thread of craft, contribution, and growth.';
+      'A journey of building, teaching, learning, and contributing to the Flutter community.';
+
+  @override
+  String get expFilterAll => 'All Milestones';
+
+  @override
+  String get expFilterProfessional => 'Professional & Leadership';
+
+  @override
+  String get expFilterTeaching => 'Teaching & Mentoring';
+
+  @override
+  String get expFilterTraining => 'Technical Training';
+
+  @override
+  String get expDateNotSpecified => 'Date not specified';
+
+  @override
+  String get expTechTrackTitle => 'Technical Track';
+
+  @override
+  String get expNonTechTrackTitle => 'Non-Technical Track';
 
   @override
   String get expChapterATag => 'CHAPTER 01';
@@ -252,22 +273,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expChapterBTitle => 'Engineering & Learning';
 
   @override
-  String get expTypeLeadership => 'LEADERSHIP';
+  String get expTypeLeadership => 'LEADERSHIP & COMMUNITY';
 
   @override
-  String get expTypeInstruction => 'INSTRUCTION';
+  String get expTypeInstruction => 'TEACHING & MENTORING';
 
   @override
-  String get expTypeMentorship => 'MENTORSHIP';
+  String get expTypeMentorship => 'MENTORING & COMMUNITY';
 
   @override
-  String get expTypeInternship => 'INTERNSHIP';
+  String get expTypeInternship => 'PROFESSIONAL EXPERIENCE';
 
   @override
-  String get expTypeTraining => 'TRAINING';
+  String get expTypeTraining => 'TECHNICAL TRAINING';
 
   @override
-  String get expTypeInitiative => 'INITIATIVE';
+  String get expTypeInitiative => 'TECHNICAL & PROFESSIONAL DEVELOPMENT';
 
   @override
   String get expEntry1Role => 'Head — Flutter Circle';
@@ -276,86 +297,86 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expEntry1Org => 'IEEE Mansoura Computer Society Chapter';
 
   @override
-  String get expEntry1Period => '2025 – 2026';
+  String get expEntry1Period => '2025–2026';
 
   @override
   String get expEntry1Desc =>
-      'Actively participated in the Flutter Circle, contributing to technical discussions, organizing activities, and supporting events related to Flutter development within the IEEE Mansoura CS Chapter.';
+      'Actively participated in the Flutter Circle, contributing to discussions, activities, and events related to Flutter development.';
 
   @override
   String get expEntry1Tag1 => 'Flutter Circle';
 
   @override
-  String get expEntry1Tag2 => 'Community';
+  String get expEntry1Tag2 => 'Community Leadership';
 
   @override
   String get expEntry1Tag3 => 'Technical Events';
 
   @override
-  String get expEntry2Role => 'Flutter Instructor';
+  String get expEntry2Role => 'Flutter Instructor — Flutter Bootcamp';
 
   @override
-  String get expEntry2Org => 'BreakinPoint Team — Flutter Bootcamp';
+  String get expEntry2Org => 'BreakinPoint Team';
 
   @override
   String get expEntry2Period => '2025';
 
   @override
   String get expEntry2Desc =>
-      'Led a 1.5-month Flutter bootcamp, guiding participants from fundamentals to final project development. Provided hands-on training, follow-up sessions, and individual support throughout the camp.';
+      'Led a 1.5-month Flutter bootcamp, guiding participants from fundamentals to final project development. Provided hands-on training, follow-up, and individual support throughout the bootcamp.';
 
   @override
-  String get expEntry2Tag1 => 'Bootcamp';
+  String get expEntry2Tag1 => '1.5-Month Bootcamp';
 
   @override
-  String get expEntry2Tag2 => 'Flutter Fundamentals';
+  String get expEntry2Tag2 => 'Hands-on Training';
 
   @override
-  String get expEntry2Tag3 => 'Project Guidance';
+  String get expEntry2Tag3 => 'Project Coaching';
 
   @override
-  String get expEntry3Role => 'Flutter Instructor';
+  String get expEntry3Role => 'Flutter Instructor — Technical Gates 5';
 
   @override
-  String get expEntry3Org => 'Technical Gates 5 — CIS Team';
+  String get expEntry3Org => 'CIS Team';
 
   @override
-  String get expEntry3Period => '2024 – 2025';
+  String get expEntry3Period => '2024–2025';
 
   @override
   String get expEntry3Desc =>
-      'Delivered sessions and mentored students in the Flutter track as part of the Technical Gates 5 program. Helped participants grasp core Flutter concepts and apply them in practical mini-projects.';
+      'Delivered sessions and mentored students in the Flutter track as part of the Technical Gates 5 program organized by the CIS Team. Helped participants understand core Flutter concepts and apply them in practical mini-projects.';
 
   @override
-  String get expEntry3Tag1 => 'Teaching';
+  String get expEntry3Tag1 => 'Curriculum Delivery';
 
   @override
-  String get expEntry3Tag2 => 'Mini-Projects';
+  String get expEntry3Tag2 => 'Core Concepts';
 
   @override
-  String get expEntry3Tag3 => 'CIS Team';
+  String get expEntry3Tag3 => 'Mini-Projects';
 
   @override
   String get expEntry4Role => 'Flutter Mentor';
 
   @override
-  String get expEntry4Org => 'CIS Team — Mansoura University';
+  String get expEntry4Org => 'CIS Team, Mansoura University';
 
   @override
-  String get expEntry4Period => '2024 – 2025';
+  String get expEntry4Period => '2024–2025';
 
   @override
   String get expEntry4Desc =>
       'Supported junior members in understanding Flutter concepts and solving coding problems. Assisted in organizing learning sessions and guiding students through projects and tasks.';
 
   @override
-  String get expEntry4Tag1 => 'One-on-One Guidance';
+  String get expEntry4Tag1 => 'Junior Mentoring';
 
   @override
   String get expEntry4Tag2 => 'Problem Solving';
 
   @override
-  String get expEntry4Tag3 => 'Knowledge Sharing';
+  String get expEntry4Tag3 => 'Learning Sessions';
 
   @override
   String get expEntry5Role => 'Flutter Developer Intern';
@@ -368,7 +389,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expEntry5Desc =>
-      'Developed and maintained mobile applications using Flutter and Dart. Implemented clean, scalable UI following modern design principles. Integrated RESTful APIs, managed application state, debugged issues, and optimized performance — collaborating within a team using version control best practices.';
+      '• Developed and maintained mobile applications using Flutter and Dart.\n• Implemented clean and scalable UI following modern design principles.\n• Integrated RESTful APIs and managed application state.\n• Debugged issues and optimized app performance for a better user experience.\n• Collaborated within a team using best practices and version control.';
 
   @override
   String get expEntry5Tag1 => 'Flutter & Dart';
@@ -380,10 +401,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expEntry5Tag3 => 'State Management';
 
   @override
-  String get expEntry5Tag4 => 'Git';
+  String get expEntry5Tag4 => 'Git & Best Practices';
 
   @override
-  String get expEntry6Role => 'Flutter Trainee';
+  String get expEntry6Role => 'Flutter Trainee — ITI Winter Internship';
 
   @override
   String get expEntry6Org => 'Information Technology Institute (ITI)';
@@ -396,36 +417,257 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expEntry6Desc =>
-      'Completed structured Flutter training covering widgets and UI design, API integration and data handling, state management techniques, and an introduction to freelancing and real-world project planning.';
+      'Completed practical Flutter training covering:\n• Flutter widgets and UI design.\n• API integration and data handling.\n• State management techniques.\n• Introduction to freelancing and real-world project planning.';
 
   @override
-  String get expEntry6Tag1 => 'Widgets & UI';
+  String get expEntry6Tag1 => 'Widgets & UI Design';
 
   @override
   String get expEntry6Tag2 => 'API Integration';
 
   @override
-  String get expEntry6Tag3 => 'Freelancing Basics';
+  String get expEntry6Tag3 => 'State Management';
 
   @override
-  String get expEntry7Role => 'Cross Platform Track — Trainee';
+  String get expEntry6Tag4 => 'Freelancing Basics';
 
   @override
-  String get expEntry7Org => 'Digital Egypt Pioneers Initiative (DEPI)';
+  String get expEntry7Role => 'Digital Egypt Pioneers Initiative (DEPI)';
+
+  @override
+  String get expEntry7Org =>
+      'DEPI — Ministry of Communications & Information Technology';
 
   @override
   String get expEntry7Period => 'June 2025';
 
   @override
   String get expEntry7Desc =>
-      'Studying the Cross Platform track using Flutter, focusing on building scalable, multi-platform mobile applications. Concurrently participating in soft skills, freelancing basics, communication, and career development sessions.';
+      '• Technical Track: Studying the Cross Platform track using Flutter, focusing on building scalable, multi-platform mobile applications.\n• Non-Technical Track: Participating in sessions on soft skills, freelancing basics, communication, and career development.';
 
   @override
-  String get expEntry7Tag1 => 'Cross Platform';
+  String get expEntry7Tag1 => 'Cross Platform Track';
 
   @override
-  String get expEntry7Tag2 => 'Multi-platform Apps';
+  String get expEntry7Tag2 => 'Scalable Applications';
 
   @override
-  String get expEntry7Tag3 => 'Career Development';
+  String get expEntry7Tag3 => 'Soft Skills & Freelancing';
+
+  @override
+  String get expEntry7Tag4 => 'Career Development';
+
+  @override
+  String get projectsSectionTag => '04 // FEATURED WORK & CASE STUDIES';
+
+  @override
+  String get projectsSectionHeading => 'Featured Projects';
+
+  @override
+  String get projectsSectionSubtitle =>
+      'A curated selection of real-world mobile applications, AI-integrated solutions, and production Flutter architectures.';
+
+  @override
+  String get projectsFilterAll => 'All Projects';
+
+  @override
+  String get projectsFilterAi => 'AI & Health';
+
+  @override
+  String get projectsFilterCommunity => 'Social Impact';
+
+  @override
+  String get projectsFilterPlatforms => 'Platforms';
+
+  @override
+  String get projectFeaturedBadge => 'FEATURED PROJECT';
+
+  @override
+  String get projectGithubBtn => 'View on GitHub';
+
+  @override
+  String get projectSourceCodeTooltip => 'Open repository on GitHub';
+
+  @override
+  String get projectComingSoon => 'Coming Soon';
+
+  @override
+  String get projectPlayStoreBtn => 'Google Play';
+
+  @override
+  String get projectAppStoreBtn => 'App Store';
+
+  @override
+  String get projectStoreInactiveTooltip =>
+      'Application store release coming soon';
+
+  @override
+  String get projectKeyContributions => 'Key Highlights:';
+
+  @override
+  String get projectVerifiedTech => 'Technologies:';
+
+  @override
+  String get projectNutrimindTitle =>
+      'NutriMind — Nutrition & Mental Wellness App';
+
+  @override
+  String get projectNutrimindCategory => 'AI & Mental Wellbeing';
+
+  @override
+  String get projectNutrimindDesc =>
+      'An intelligent nutrition and mental-wellness companion built with Flutter, combining AI-powered meal analysis, nutritional tracking, daily wellness tips, and a conversational assistant in one personalized experience.';
+
+  @override
+  String get projectNutrimindFeature1 =>
+      'AI-powered meal scanning & instant macronutrient breakdown (calories, protein, carbs, fat)';
+
+  @override
+  String get projectNutrimindFeature2 =>
+      'Breakfast, lunch, and dinner tracking with comprehensive nutrition dashboard';
+
+  @override
+  String get projectNutrimindFeature3 =>
+      'Meal history synced through Cloud Firestore & Firebase Authentication';
+
+  @override
+  String get projectNutrimindFeature4 =>
+      'Conversational AI nutrition assistant & daily mental wellness guidance';
+
+  @override
+  String get projectQootTitle => 'Qoot — Food Donation Application';
+
+  @override
+  String get projectQootCategory => 'Charity & Social Impact';
+
+  @override
+  String get projectQootRole => 'Charity Module Lead (DEPI Team)';
+
+  @override
+  String get projectQootDesc =>
+      'Developed the complete Charity module for the Qoot food-donation application using Flutter and Bloc/Cubit architecture within a multidisciplinary DEPI team. Implemented core donation workflows, reservation tracking, charity profile management, and responsive Clean Architecture screens to reduce food waste and support charities.';
+
+  @override
+  String get projectQootFeature1 =>
+      'Complete Charity Module & Donation Reservation Workflow';
+
+  @override
+  String get projectQootFeature2 =>
+      'Clean Architecture, BLoC State Management & REST APIs';
+
+  @override
+  String get projectQootFeature3 =>
+      'Real-world initiative to reduce food waste and empower charities';
+
+  @override
+  String get projectSanadTitle => 'Sanad — Legal Services Platform';
+
+  @override
+  String get projectSanadCategory => 'Legal Tech & Advisory';
+
+  @override
+  String get projectSanadDesc =>
+      'Developed a mobile application that connects clients with lawyers for legal consultations and case representation through a user-friendly platform. Enables browsing lawyers based on experience, education, pricing, and client reviews, viewing detailed lawyer profiles, and communicating seamlessly. Includes an AI-powered chatbot to assist users and support lawyers in analyzing cases and finding similar legal references.';
+
+  @override
+  String get projectSanadFeature1 =>
+      'Intelligent Lawyer Discovery, Verified Profiles & Client Reviews';
+
+  @override
+  String get projectSanadFeature2 =>
+      'Seamless Legal Consultations & Case Representation Booking';
+
+  @override
+  String get projectSanadFeature3 =>
+      'AI Legal Chatbot for Case Analysis & Reference Discovery';
+
+  @override
+  String get projectRafeeqTitle => 'Rafeeq — Founder & Investor Platform';
+
+  @override
+  String get projectRafeeqCategory => 'Startups & Venture Capital';
+
+  @override
+  String get projectRafeeqDesc =>
+      'Developed a mobile application connecting startup founders with investors to support startup ideas and funding opportunities through an interactive platform. Enables founders to showcase projects and allows investors to browse, filter, and discover vetted startup concepts based on interests, fostering smoother investment and collaboration.';
+
+  @override
+  String get projectRafeeqFeature1 =>
+      'Startup Pitch Showcase & Multi-Step Creation Wizard';
+
+  @override
+  String get projectRafeeqFeature2 =>
+      'Custom Filtering & Opportunity Discovery for Investors';
+
+  @override
+  String get projectRafeeqFeature3 =>
+      'Direct Collaboration Channel Between Founders and Angels';
+
+  @override
+  String get contactSectionTag => '05 // GET IN TOUCH';
+
+  @override
+  String get contactSectionHeading => 'Let\'s Connect';
+
+  @override
+  String get contactSectionSubtitle =>
+      'Have an opportunity, a project idea, or a chance to collaborate? I\'d love to hear from you.';
+
+  @override
+  String get contactLocation => 'Mansoura, Dakahlia, Egypt';
+
+  @override
+  String get contactEmailLabel => 'Email Address';
+
+  @override
+  String get contactPhoneLabel => 'Phone / WhatsApp';
+
+  @override
+  String get contactLinkedInLabel => 'LinkedIn Profile';
+
+  @override
+  String get contactGitHubLabel => 'GitHub Repositories';
+
+  @override
+  String get contactCopyTooltip => 'Copy to clipboard';
+
+  @override
+  String get contactCopiedSnackbar => 'Copied to clipboard!';
+
+  @override
+  String get contactSendEmailBtn => 'Send an Email';
+
+  @override
+  String get contactCallBtn => 'Call / Dial';
+
+  @override
+  String get contactViewProfileBtn => 'View Profile';
+
+  @override
+  String get contactViewGithubBtn => 'Explore GitHub';
+
+  @override
+  String get contactAvailabilityBadge => 'Available for New Opportunities';
+
+  @override
+  String get contactAvailabilityDesc =>
+      'Open to Full-time Flutter Developer positions, remote roles, and innovative freelance mobile projects.';
+
+  @override
+  String get footerTagline =>
+      'Flutter Developer building thoughtful, scalable mobile experiences.';
+
+  @override
+  String get footerQuickLinksTitle => 'Navigation';
+
+  @override
+  String get footerSocialsTitle => 'Connect';
+
+  @override
+  String footerCopyright(String year) {
+    return '© $year Romisaa Fadel. All rights reserved.';
+  }
+
+  @override
+  String get footerBackToTop => 'Back to Top';
 }
