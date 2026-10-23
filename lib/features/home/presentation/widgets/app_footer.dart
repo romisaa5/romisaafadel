@@ -7,6 +7,10 @@ import '../../../../core/utils/url_launcher_web.dart';
 import '../../../../core/widgets/brand_icons.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// App Footer — Premium, Compact, Editorial Conclusion
+// ─────────────────────────────────────────────────────────────────────────────
+
 class AppFooter extends StatelessWidget {
   const AppFooter({
     super.key,
@@ -41,11 +45,11 @@ class AppFooter extends StatelessWidget {
     final hPad = isCompact ? 24.0 : (isDesktop ? 64.0 : 40.0);
 
     final footerBg = isDark
-        ? AppColors.darkBackground.withValues(alpha: 0.95)
-        : const Color(0xFFF3ECEF);
+        ? const Color(0xFF140D15) // Deep Plum night
+        : const Color(0xFFF4EDF1);
 
     final borderColor = isDark
-        ? AppColors.darkBorder.withValues(alpha: 0.70)
+        ? AppColors.darkBorder.withValues(alpha: 0.60)
         : AppColors.lightBorder.withValues(alpha: 0.85);
 
     final primaryTextColor = isDark ? AppColors.ivory : AppColors.deepPlum;
@@ -61,22 +65,25 @@ class AppFooter extends StatelessWidget {
           top: BorderSide(color: borderColor, width: 1.0),
         ),
       ),
-      padding: EdgeInsets.symmetric(horizontal: hPad, vertical: isCompact ? 36.0 : 48.0),
+      padding: EdgeInsets.symmetric(
+        horizontal: hPad,
+        vertical: isCompact ? 32.0 : 40.0,
+      ),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1400),
+          constraints: const BoxConstraints(maxWidth: 1300),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // ── 1. Top Row: Brand & Quick Navigation ──────────────────
+              // ── 1. Top Content Row ───────────────────────────────────────
               if (isDesktop)
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Brand & Description
+                    // Left: Brand, Title & Tagline
                     Expanded(
-                      flex: 4,
+                      flex: 5,
                       child: _buildBrandBlock(
                         l10n,
                         isDark,
@@ -88,10 +95,10 @@ class AppFooter extends StatelessWidget {
 
                     const SizedBox(width: 48),
 
-                    // Quick Navigation
+                    // Center: Compact Section Navigation
                     Expanded(
                       flex: 4,
-                      child: _buildQuickLinksBlock(
+                      child: _buildNavigationBlock(
                         l10n,
                         isDark,
                         isArabic,
@@ -102,7 +109,7 @@ class AppFooter extends StatelessWidget {
 
                     const SizedBox(width: 32),
 
-                    // Connect & Socials
+                    // Right: Social Profiles & Direct Email
                     Expanded(
                       flex: 3,
                       child: _buildSocialsBlock(
@@ -117,8 +124,9 @@ class AppFooter extends StatelessWidget {
                 )
               else
                 Column(
-                  crossAxisAlignment:
-                      isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                  crossAxisAlignment: isArabic
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
                   children: [
                     _buildBrandBlock(
                       l10n,
@@ -127,15 +135,15 @@ class AppFooter extends StatelessWidget {
                       primaryTextColor,
                       bodyTextColor,
                     ),
-                    const SizedBox(height: 32),
-                    _buildQuickLinksBlock(
+                    const SizedBox(height: 28),
+                    _buildNavigationBlock(
                       l10n,
                       isDark,
                       isArabic,
                       primaryTextColor,
                       bodyTextColor,
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 28),
                     _buildSocialsBlock(
                       l10n,
                       isDark,
@@ -146,18 +154,18 @@ class AppFooter extends StatelessWidget {
                   ],
                 ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 32),
 
-              // ── 2. Subtle Divider ─────────────────────────────────────
+              // ── 2. Subtle Divider ─────────────────────────────────────────
               Divider(
                 color: borderColor,
                 height: 1,
                 thickness: 0.8,
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
-              // ── 3. Bottom Row: Copyright + Back to Top ────────────────
+              // ── 3. Bottom Row: Dynamic Copyright + Back to Top ────────────
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -167,7 +175,7 @@ class AppFooter extends StatelessWidget {
                       l10n.footerCopyright(currentYear),
                       textAlign: isArabic ? TextAlign.right : TextAlign.left,
                       style: GoogleFonts.outfit(
-                        fontSize: 12.5,
+                        fontSize: 12,
                         fontWeight: FontWeight.w400,
                         color: bodyTextColor,
                       ),
@@ -179,25 +187,51 @@ class AppFooter extends StatelessWidget {
                     onTap: onHome,
                     borderRadius: BorderRadius.circular(8),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            l10n.footerBackToTop,
-                            style: GoogleFonts.outfit(
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w600,
-                              color: isDark ? AppColors.dustyRose : AppColors.mauve,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Icon(
-                            Icons.keyboard_arrow_up_rounded,
-                            size: 16,
-                            color: isDark ? AppColors.dustyRose : AppColors.mauve,
-                          ),
-                        ],
+                        children: isArabic
+                            ? [
+                                Icon(
+                                  Icons.keyboard_arrow_up_rounded,
+                                  size: 16,
+                                  color: isDark
+                                      ? AppColors.dustyRose
+                                      : AppColors.mauve,
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  l10n.footerBackToTop,
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: isDark
+                                        ? AppColors.dustyRose
+                                        : AppColors.mauve,
+                                  ),
+                                ),
+                              ]
+                            : [
+                                Text(
+                                  l10n.footerBackToTop,
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: isDark
+                                        ? AppColors.dustyRose
+                                        : AppColors.mauve,
+                                  ),
+                                ),
+                                const SizedBox(width: 5),
+                                Icon(
+                                  Icons.keyboard_arrow_up_rounded,
+                                  size: 16,
+                                  color: isDark
+                                      ? AppColors.dustyRose
+                                      : AppColors.mauve,
+                                ),
+                              ],
                       ),
                     ),
                   ),
@@ -210,6 +244,8 @@ class AppFooter extends StatelessWidget {
     );
   }
 
+  // ── Brand Column ───────────────────────────────────────────────────────────
+
   Widget _buildBrandBlock(
     AppLocalizations l10n,
     bool isDark,
@@ -221,7 +257,7 @@ class AppFooter extends StatelessWidget {
       crossAxisAlignment:
           isArabic ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
-        // Logo + Name
+        // Monogram + Display Name
         InkWell(
           onTap: onHome,
           borderRadius: BorderRadius.circular(8),
@@ -235,18 +271,23 @@ class AppFooter extends StatelessWidget {
                   color: (isDark ? AppColors.dustyRose : AppColors.mauve)
                       .withValues(alpha: isDark ? 0.18 : 0.12),
                   borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: (isDark ? AppColors.dustyRose : AppColors.mauve)
+                        .withValues(alpha: 0.35),
+                    width: 0.9,
+                  ),
                 ),
                 child: Center(
                   child: Image.asset(
                     'assets/images/logo.png',
-                    width: 20,
-                    height: 20,
+                    width: 18,
+                    height: 18,
                     fit: BoxFit.contain,
                     errorBuilder: (_, _, _) => Text(
                       'RF',
-                      style: TextStyle(
+                      style: GoogleFonts.outfit(
                         fontSize: 12,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                         color: isDark ? AppColors.dustyRose : AppColors.mauve,
                       ),
                     ),
@@ -255,11 +296,11 @@ class AppFooter extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                l10n.displayName,
+                'Romisaa Fadel',
                 style: GoogleFonts.outfit(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.2,
+                  fontSize: 16.5,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.2,
                   color: primaryTextColor,
                 ),
               ),
@@ -267,24 +308,60 @@ class AppFooter extends StatelessWidget {
           ),
         ),
 
+        const SizedBox(height: 10),
+
+        // Concise Tagline
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 360),
+          child: Text(
+            l10n.footerTagline,
+            textAlign: isArabic ? TextAlign.right : TextAlign.left,
+            style: GoogleFonts.outfit(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w400,
+              height: 1.5,
+              color: bodyTextColor,
+            ),
+          ),
+        ),
+
         const SizedBox(height: 12),
 
-        // Tagline
-        Text(
-          l10n.footerTagline,
-          textAlign: isArabic ? TextAlign.right : TextAlign.left,
-          style: GoogleFonts.outfit(
-            fontSize: 13.5,
-            fontWeight: FontWeight.w400,
-            height: 1.55,
-            color: bodyTextColor,
+        // Flutter Craft Badge
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: (isDark ? AppColors.dustyRose : AppColors.mauve)
+                .withValues(alpha: isDark ? 0.10 : 0.06),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.flutter_dash_rounded,
+                size: 13,
+                color: Color(0xFF02569B),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                'Engineered with Flutter Web',
+                style: GoogleFonts.outfit(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? AppColors.dustyRose : AppColors.mauve,
+                ),
+              ),
+            ],
           ),
         ),
       ],
     );
   }
 
-  Widget _buildQuickLinksBlock(
+  // ── Navigation Column ──────────────────────────────────────────────────────
+
+  Widget _buildNavigationBlock(
     AppLocalizations l10n,
     bool isDark,
     bool isArabic,
@@ -307,29 +384,31 @@ class AppFooter extends StatelessWidget {
         Text(
           l10n.footerQuickLinksTitle,
           style: GoogleFonts.outfit(
-            fontSize: 14,
+            fontSize: 12.5,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.5,
             color: primaryTextColor,
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 12),
         Wrap(
           spacing: 16,
-          runSpacing: 10,
+          runSpacing: 8,
           alignment: isArabic ? WrapAlignment.end : WrapAlignment.start,
           children: links.map((link) {
-            final (title, onTap) = link;
-            return _FooterLinkText(
-              title: title,
-              onTap: onTap,
+            return _FooterNavLink(
+              label: link.$1,
+              onTap: link.$2,
               isDark: isDark,
+              bodyTextColor: bodyTextColor,
             );
           }).toList(),
         ),
       ],
     );
   }
+
+  // ── Socials Column ─────────────────────────────────────────────────────────
 
   Widget _buildSocialsBlock(
     AppLocalizations l10n,
@@ -345,38 +424,38 @@ class AppFooter extends StatelessWidget {
         Text(
           l10n.footerSocialsTitle,
           style: GoogleFonts.outfit(
-            fontSize: 14,
+            fontSize: 12.5,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.5,
             color: primaryTextColor,
           ),
         ),
-        const SizedBox(height: 14),
-        Row(
-          mainAxisSize: MainAxisSize.min,
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          alignment: isArabic ? WrapAlignment.end : WrapAlignment.start,
           children: [
             // GitHub
-            _SocialIconButton(
-              icon: const BrandIcon.github(size: 18),
-              tooltip: 'GitHub — @romisaa5',
+            _FooterSocialButton(
+              icon: const BrandIcon.github(size: 15),
+              tooltip: 'GitHub (romisaa5)',
               onTap: () => WebUrlLauncher.openUrl(gitHubUrl),
               isDark: isDark,
             ),
-            const SizedBox(width: 10),
 
             // LinkedIn
-            _SocialIconButton(
-              icon: const BrandIcon.linkedIn(size: 18),
-              tooltip: 'LinkedIn — Romisaa Fadel',
+            _FooterSocialButton(
+              icon: const BrandIcon.linkedIn(size: 15),
+              tooltip: 'LinkedIn (romisaafadel)',
               onTap: () => WebUrlLauncher.openUrl(linkedInUrl),
               isDark: isDark,
             ),
-            const SizedBox(width: 10),
 
             // Email
-            _SocialIconButton(
-              icon: const Icon(Icons.mail_outline_rounded, size: 18),
-              tooltip: email,
+            _FooterSocialButton(
+              icon: const Icon(Icons.mail_outline_rounded, size: 15),
+              tooltip: 'Email (romisaafadel982@gmail.com)',
               onTap: () => WebUrlLauncher.sendEmail(email),
               isDark: isDark,
             ),
@@ -387,32 +466,30 @@ class AppFooter extends StatelessWidget {
   }
 }
 
-class _FooterLinkText extends StatefulWidget {
-  const _FooterLinkText({
-    required this.title,
+class _FooterNavLink extends StatefulWidget {
+  const _FooterNavLink({
+    required this.label,
     required this.onTap,
     required this.isDark,
+    required this.bodyTextColor,
   });
 
-  final String title;
+  final String label;
   final VoidCallback onTap;
   final bool isDark;
+  final Color bodyTextColor;
 
   @override
-  State<_FooterLinkText> createState() => _FooterLinkTextState();
+  State<_FooterNavLink> createState() => _FooterNavLinkState();
 }
 
-class _FooterLinkTextState extends State<_FooterLinkText> {
+class _FooterNavLinkState extends State<_FooterNavLink> {
   bool _hovered = false;
 
   @override
   Widget build(BuildContext context) {
-    final isDark = widget.isDark;
-    final color = _hovered
-        ? (isDark ? AppColors.dustyRose : AppColors.mauve)
-        : (isDark
-            ? AppColors.ivory.withValues(alpha: 0.70)
-            : AppColors.deepPlum.withValues(alpha: 0.70));
+    final activeColor =
+        widget.isDark ? AppColors.dustyRose : AppColors.mauve;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
@@ -421,21 +498,21 @@ class _FooterLinkTextState extends State<_FooterLinkText> {
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedDefaultTextStyle(
-          duration: const Duration(milliseconds: 180),
+          duration: const Duration(milliseconds: 150),
           style: GoogleFonts.outfit(
-            fontSize: 13,
+            fontSize: 12,
             fontWeight: _hovered ? FontWeight.w600 : FontWeight.w400,
-            color: color,
+            color: _hovered ? activeColor : widget.bodyTextColor,
           ),
-          child: Text(widget.title),
+          child: Text(widget.label),
         ),
       ),
     );
   }
 }
 
-class _SocialIconButton extends StatefulWidget {
-  const _SocialIconButton({
+class _FooterSocialButton extends StatefulWidget {
+  const _FooterSocialButton({
     required this.icon,
     required this.tooltip,
     required this.onTap,
@@ -448,24 +525,16 @@ class _SocialIconButton extends StatefulWidget {
   final bool isDark;
 
   @override
-  State<_SocialIconButton> createState() => _SocialIconButtonState();
+  State<_FooterSocialButton> createState() => _FooterSocialButtonState();
 }
 
-class _SocialIconButtonState extends State<_SocialIconButton> {
+class _FooterSocialButtonState extends State<_FooterSocialButton> {
   bool _hovered = false;
 
   @override
   Widget build(BuildContext context) {
-    final isDark = widget.isDark;
-    final bg = _hovered
-        ? (isDark ? AppColors.dustyRose : AppColors.mauve)
-        : (isDark
-            ? AppColors.darkSurface.withValues(alpha: 0.8)
-            : Colors.white.withValues(alpha: 0.85));
-
-    final fg = _hovered
-        ? Colors.white
-        : (isDark ? AppColors.ivory : AppColors.deepPlum);
+    final activeColor =
+        widget.isDark ? AppColors.dustyRose : AppColors.mauve;
 
     return Tooltip(
       message: widget.tooltip,
@@ -474,23 +543,37 @@ class _SocialIconButtonState extends State<_SocialIconButton> {
         onExit: (_) => setState(() => _hovered = false),
         child: InkWell(
           onTap: widget.onTap,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: 38,
-            height: 38,
+            duration: const Duration(milliseconds: 180),
+            width: 32,
+            height: 32,
             decoration: BoxDecoration(
-              color: bg,
-              borderRadius: BorderRadius.circular(10),
+              color: widget.isDark
+                  ? (_hovered
+                      ? AppColors.darkSurface
+                      : AppColors.darkSurface.withValues(alpha: 0.55))
+                  : (_hovered ? Colors.white : Colors.white.withValues(alpha: 0.70)),
+              borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: (isDark ? AppColors.darkBorder : AppColors.lightBorder)
-                    .withValues(alpha: 0.7),
+                color: _hovered
+                    ? activeColor.withValues(alpha: 0.5)
+                    : (widget.isDark
+                        ? AppColors.darkBorder.withValues(alpha: 0.7)
+                        : AppColors.lightBorder.withValues(alpha: 0.7)),
                 width: 0.8,
               ),
             ),
             child: Center(
               child: IconTheme(
-                data: IconThemeData(color: fg, size: 18),
+                data: IconThemeData(
+                  color: _hovered
+                      ? activeColor
+                      : (widget.isDark
+                          ? AppColors.ivory.withValues(alpha: 0.8)
+                          : AppColors.deepPlum.withValues(alpha: 0.8)),
+                  size: 15,
+                ),
                 child: widget.icon,
               ),
             ),

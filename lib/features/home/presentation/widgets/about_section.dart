@@ -231,42 +231,28 @@ class _AboutNarrative extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Lead statement
+        // Main Introduction (Updated short, refined copy)
         Text(
-          l10n.aboutLead,
+          l10n.aboutBio,
           style: GoogleFonts.outfit(
-            fontSize: 19.0,
+            fontSize: 18.0,
             fontWeight: FontWeight.w500,
             color: primaryColor,
-            height: 1.60,
+            height: 1.65,
             letterSpacing: 0.1,
           ),
         ),
 
         const SizedBox(height: 20),
 
-        // Detailed bio
-        Text(
-          l10n.aboutBio,
-          style: GoogleFonts.outfit(
-            fontSize: 15.5,
-            fontWeight: FontWeight.w400,
-            color: bodyColor,
-            height: 1.80,
-            letterSpacing: 0.15,
-          ),
-        ),
-
-        const SizedBox(height: 16),
-
         // Community & Mentorship focus
         Text(
           l10n.aboutMentorship,
           style: GoogleFonts.outfit(
-            fontSize: 15.5,
+            fontSize: 15.0,
             fontWeight: FontWeight.w400,
             color: bodyColor,
-            height: 1.80,
+            height: 1.75,
             letterSpacing: 0.15,
           ),
         ),

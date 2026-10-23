@@ -94,11 +94,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutLead =>
-      'Flutter Developer with a strong foundation in cross-platform mobile development and a passion for creating clean, efficient, and user-friendly applications.';
+      'I\'m a Flutter Developer and Computer Science student at Mansoura University, passionate about building clean, user-friendly mobile applications. I enjoy turning ideas into practical solutions through thoughtful UI design, maintainable code, and continuous learning.';
 
   @override
   String get aboutBio =>
-      'Currently a third-year Computer Science student at Mansoura University, I combine rigorous theoretical fundamentals with over two years of hands-on Flutter experience. I specialize in scalable cross-platform architecture, reactive state management with BLoC and Cubit, and seamless backend API integrations.';
+      'I\'m a Flutter Developer and Computer Science student at Mansoura University, passionate about building clean, user-friendly mobile applications. I enjoy turning ideas into practical solutions through thoughtful UI design, maintainable code, and continuous learning.';
 
   @override
   String get aboutMentorship =>
@@ -486,6 +486,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get projectGithubBtn => 'View on GitHub';
 
   @override
+  String get projectVisitWebsiteBtn => 'Visit Website';
+
+  @override
+  String get projectVisitWebsiteTooltip => 'Open official website in new tab';
+
+  @override
   String get projectSourceCodeTooltip => 'Open repository on GitHub';
 
   @override
@@ -516,26 +522,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get projectNutrimindDesc =>
-      'An intelligent nutrition and mental-wellness companion built with Flutter, combining AI-powered meal analysis, nutritional tracking, daily wellness tips, and a conversational assistant in one personalized experience.';
+      'An intelligent nutrition and wellbeing companion featuring Groq Vision AI meal scanning, comprehensive macronutrient tracking, and personalized daily health guidance.';
 
   @override
   String get projectNutrimindFeature1 =>
-      'AI-powered meal scanning & instant macronutrient breakdown (calories, protein, carbs, fat)';
+      'AI-powered meal scanning & macronutrient breakdown';
 
   @override
   String get projectNutrimindFeature2 =>
-      'Breakfast, lunch, and dinner tracking with comprehensive nutrition dashboard';
+      'Breakfast, lunch & dinner nutrition dashboard';
 
   @override
   String get projectNutrimindFeature3 =>
-      'Meal history synced through Cloud Firestore & Firebase Authentication';
+      'Cloud Firestore & Firebase Authentication sync';
 
   @override
-  String get projectNutrimindFeature4 =>
-      'Conversational AI nutrition assistant & daily mental wellness guidance';
+  String get projectNutrimindFeature4 => 'Conversational AI wellness assistant';
 
   @override
-  String get projectQootTitle => 'Qoot — Food Donation Application';
+  String get projectQootTitle => 'Qoot — Food Donation App';
 
   @override
   String get projectQootCategory => 'Charity & Social Impact';
@@ -545,11 +550,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get projectQootDesc =>
-      'Developed the complete Charity module for the Qoot food-donation application using Flutter and Bloc/Cubit architecture within a multidisciplinary DEPI team. Implemented core donation workflows, reservation tracking, charity profile management, and responsive Clean Architecture screens to reduce food waste and support charities.';
+      'Engineered the Charity module for the Qoot food-donation initiative within a DEPI team, implementing donation reservation workflows, charity profiles, and clean architecture UI to fight food waste.';
 
   @override
   String get projectQootFeature1 =>
-      'Complete Charity Module & Donation Reservation Workflow';
+      'Charity Module & Donation Reservation Workflow';
 
   @override
   String get projectQootFeature2 =>
@@ -557,29 +562,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get projectQootFeature3 =>
-      'Real-world initiative to reduce food waste and empower charities';
+      'Real-world initiative to reduce food waste and support charities';
 
   @override
-  String get projectSanadTitle => 'Sanad — Legal Services Platform';
+  String get projectSanadTitle => 'Sanad — Legal Services App';
 
   @override
   String get projectSanadCategory => 'Legal Tech & Advisory';
 
   @override
   String get projectSanadDesc =>
-      'Developed a mobile application that connects clients with lawyers for legal consultations and case representation through a user-friendly platform. Enables browsing lawyers based on experience, education, pricing, and client reviews, viewing detailed lawyer profiles, and communicating seamlessly. Includes an AI-powered chatbot to assist users and support lawyers in analyzing cases and finding similar legal references.';
+      'A legal platform connecting clients with verified lawyers for consultations and case representation, powered by an AI assistant for rapid case analysis and reference discovery.';
 
   @override
   String get projectSanadFeature1 =>
-      'Intelligent Lawyer Discovery, Verified Profiles & Client Reviews';
+      'Verified Lawyer Discovery & Client Consultations';
 
   @override
   String get projectSanadFeature2 =>
-      'Seamless Legal Consultations & Case Representation Booking';
+      'Case Representation Booking & Profile Management';
 
   @override
   String get projectSanadFeature3 =>
-      'AI Legal Chatbot for Case Analysis & Reference Discovery';
+      'AI Legal Chatbot for Case Analysis & Discovery';
 
   @override
   String get projectRafeeqTitle => 'Rafeeq — Founder & Investor Platform';
@@ -589,7 +594,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get projectRafeeqDesc =>
-      'Developed a mobile application connecting startup founders with investors to support startup ideas and funding opportunities through an interactive platform. Enables founders to showcase projects and allows investors to browse, filter, and discover vetted startup concepts based on interests, fostering smoother investment and collaboration.';
+      'An interactive platform connecting startup founders with investors, featuring multi-step pitch creation, custom venture discovery, and direct collaboration channels.';
 
   @override
   String get projectRafeeqFeature1 =>

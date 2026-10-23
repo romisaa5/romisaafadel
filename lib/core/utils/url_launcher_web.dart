@@ -17,20 +17,36 @@ class WebUrlLauncher {
     }
   }
 
-  /// Launches an email draft via mailto link.
+  /// Launches an email composition window via standard mailto URI.
+  ///
+  /// Uses direct browser navigation to the mailto protocol so the user's
+  /// operating system or default email client (Outlook, Mail, Gmail) opens
+  /// with the recipient already populated.
   static Future<bool> sendEmail(String email, {String? subject}) async {
     try {
-      final uri = Uri(
-        scheme: 'mailto',
-        path: email,
-        query: subject != null ? 'subject=${Uri.encodeComponent(subject)}' : null,
-      );
+      if (email.isEmpty) return false;
+
+      final trimmedEmail = email.trim();
+      final String mailtoUri;
+      if (subject != null && subject.trim().isNotEmpty) {
+        final encodedSubject = Uri.encodeComponent(subject.trim());
+        mailtoUri = 'mailto:$trimmedEmail?subject=$encodedSubject';
+      } else {
+        mailtoUri = 'mailto:$trimmedEmail';
+      }
+
+      // Direct assignment to window.location triggers the browser's registered
+      // mailto protocol handler reliably without navigating away from the page.
+      web.window.location.href = mailtoUri;
+
+      // Secondary fallback via anchor element for additional browser compatibility
       final anchor = web.document.createElement('a') as web.HTMLAnchorElement;
-      anchor.href = uri.toString();
-      web.document.body!.appendChild(anchor);
+      anchor.href = mailtoUri;
+      anchor.target = '_self';
+      web.document.body?.appendChild(anchor);
       anchor.click();
-      await Future<void>.delayed(const Duration(milliseconds: 100));
-      web.document.body!.removeChild(anchor);
+      anchor.remove();
+
       return true;
     } catch (_) {
       return false;
@@ -40,12 +56,9 @@ class WebUrlLauncher {
   /// Launches phone dialer / tel link.
   static Future<bool> dialPhone(String phoneNumber) async {
     try {
-      final anchor = web.document.createElement('a') as web.HTMLAnchorElement;
-      anchor.href = 'tel:$phoneNumber';
-      web.document.body!.appendChild(anchor);
-      anchor.click();
-      await Future<void>.delayed(const Duration(milliseconds: 100));
-      web.document.body!.removeChild(anchor);
+      if (phoneNumber.isEmpty) return false;
+      final telUri = 'tel:${phoneNumber.trim()}';
+      web.window.location.href = telUri;
       return true;
     } catch (_) {
       return false;

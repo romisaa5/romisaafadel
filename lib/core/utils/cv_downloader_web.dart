@@ -1,14 +1,45 @@
 import 'dart:async';
+import 'dart:js_interop';
+import 'dart:typed_data';
 // ignore: avoid_web_libraries_in_flutter
 import 'package:web/web.dart' as web;
 
-/// Triggers a browser download of the given [assetPath] (a Flutter web asset URL)
-/// using the supplied [downloadFilename].
+/// Triggers a browser download of the supplied file [bytes] as a Blob object URL.
 ///
-/// This uses the `<a download>` trick which is the most reliable, dependency-free
-/// way to download a static asset in a Flutter Web app.
-///
-/// Returns `true` on success, `false` if anything goes wrong.
+/// Using a Blob object URL with the HTML5 `<a download="...">` attribute guarantees
+/// that the browser triggers an actual file download with [downloadFilename], rather
+/// than simply navigating to or opening the document in a new tab.
+Future<bool> downloadBytes({
+  required Uint8List bytes,
+  required String downloadFilename,
+  String mimeType = 'application/pdf',
+}) async {
+  try {
+    final jsArray = bytes.toJS;
+    final blob = web.Blob(
+      [jsArray].toJS,
+      web.BlobPropertyBag(type: mimeType),
+    );
+    final blobUrl = web.URL.createObjectURL(blob);
+
+    final anchor = web.document.createElement('a') as web.HTMLAnchorElement;
+    anchor.href = blobUrl;
+    anchor.download = downloadFilename;
+    anchor.style.display = 'none';
+    web.document.body?.appendChild(anchor);
+    anchor.click();
+
+    // Small delay before cleanup so the browser registers the download trigger.
+    await Future<void>.delayed(const Duration(milliseconds: 250));
+    anchor.remove();
+    web.URL.revokeObjectURL(blobUrl);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+/// Fallback method using direct asset path URL.
 Future<bool> downloadAsset({
   required String assetPath,
   required String downloadFilename,
@@ -18,11 +49,10 @@ Future<bool> downloadAsset({
     anchor.href = assetPath;
     anchor.download = downloadFilename;
     anchor.style.display = 'none';
-    web.document.body!.appendChild(anchor);
+    web.document.body?.appendChild(anchor);
     anchor.click();
-    // Small delay before removal so the browser can register the click.
-    await Future<void>.delayed(const Duration(milliseconds: 100));
-    web.document.body!.removeChild(anchor);
+    await Future<void>.delayed(const Duration(milliseconds: 150));
+    anchor.remove();
     return true;
   } catch (e) {
     return false;

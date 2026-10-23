@@ -34,20 +34,56 @@ class HeroActions extends StatefulWidget {
 class _HeroActionsState extends State<HeroActions> {
   bool _downloading = false;
 
-  static const String _cvAssetPath = 'assets/documents/romisaa_fadel_cv.pdf';
+  static const List<String> _candidateCvPaths = [
+    'assets/documents/resume.pdf',
+    'assets/documents/romisaa_fadel_cv.pdf',
+  ];
   static const String _cvDownloadName = 'Romisaa_Fadel_CV.pdf';
 
   Future<void> _handleDownload(AppLocalizations l10n) async {
     if (_downloading) return;
     setState(() => _downloading = true);
 
+    ByteData? byteData;
+    for (final path in _candidateCvPaths) {
+      try {
+        byteData = await rootBundle.load(path);
+        break;
+      } catch (_) {
+        // Try next candidate path
+      }
+    }
+
+    if (byteData == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.heroCvMissing),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: AppColors.mauve,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+        setState(() => _downloading = false);
+      }
+      return;
+    }
+
     try {
-      await rootBundle.load(_cvAssetPath);
-      await downloadAsset(
-        assetPath: _cvAssetPath,
+      final bytes = byteData.buffer.asUint8List();
+      final success = await downloadBytes(
+        bytes: bytes,
         downloadFilename: _cvDownloadName,
       );
-    } on FlutterError {
+
+      if (!success) {
+        // Fallback to direct asset path
+        await downloadAsset(
+          assetPath: _candidateCvPaths.first,
+          downloadFilename: _cvDownloadName,
+        );
+      }
+    } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

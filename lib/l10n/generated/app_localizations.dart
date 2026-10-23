@@ -257,13 +257,13 @@ abstract class AppLocalizations {
   /// About lead summary
   ///
   /// In en, this message translates to:
-  /// **'Flutter Developer with a strong foundation in cross-platform mobile development and a passion for creating clean, efficient, and user-friendly applications.'**
+  /// **'I\'m a Flutter Developer and Computer Science student at Mansoura University, passionate about building clean, user-friendly mobile applications. I enjoy turning ideas into practical solutions through thoughtful UI design, maintainable code, and continuous learning.'**
   String get aboutLead;
 
   /// About bio details
   ///
   /// In en, this message translates to:
-  /// **'Currently a third-year Computer Science student at Mansoura University, I combine rigorous theoretical fundamentals with over two years of hands-on Flutter experience. I specialize in scalable cross-platform architecture, reactive state management with BLoC and Cubit, and seamless backend API integrations.'**
+  /// **'I\'m a Flutter Developer and Computer Science student at Mansoura University, passionate about building clean, user-friendly mobile applications. I enjoy turning ideas into practical solutions through thoughtful UI design, maintainable code, and continuous learning.'**
   String get aboutBio;
 
   /// About mentorship details
@@ -998,6 +998,18 @@ abstract class AppLocalizations {
   /// **'View on GitHub'**
   String get projectGithubBtn;
 
+  /// Visit website button label
+  ///
+  /// In en, this message translates to:
+  /// **'Visit Website'**
+  String get projectVisitWebsiteBtn;
+
+  /// Visit website tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Open official website in new tab'**
+  String get projectVisitWebsiteTooltip;
+
   /// Source code tooltip
   ///
   /// In en, this message translates to:
@@ -1055,37 +1067,37 @@ abstract class AppLocalizations {
   /// NutriMind description
   ///
   /// In en, this message translates to:
-  /// **'An intelligent nutrition and mental-wellness companion built with Flutter, combining AI-powered meal analysis, nutritional tracking, daily wellness tips, and a conversational assistant in one personalized experience.'**
+  /// **'An intelligent nutrition and wellbeing companion featuring Groq Vision AI meal scanning, comprehensive macronutrient tracking, and personalized daily health guidance.'**
   String get projectNutrimindDesc;
 
   /// NutriMind feature 1
   ///
   /// In en, this message translates to:
-  /// **'AI-powered meal scanning & instant macronutrient breakdown (calories, protein, carbs, fat)'**
+  /// **'AI-powered meal scanning & macronutrient breakdown'**
   String get projectNutrimindFeature1;
 
   /// NutriMind feature 2
   ///
   /// In en, this message translates to:
-  /// **'Breakfast, lunch, and dinner tracking with comprehensive nutrition dashboard'**
+  /// **'Breakfast, lunch & dinner nutrition dashboard'**
   String get projectNutrimindFeature2;
 
   /// NutriMind feature 3
   ///
   /// In en, this message translates to:
-  /// **'Meal history synced through Cloud Firestore & Firebase Authentication'**
+  /// **'Cloud Firestore & Firebase Authentication sync'**
   String get projectNutrimindFeature3;
 
   /// NutriMind feature 4
   ///
   /// In en, this message translates to:
-  /// **'Conversational AI nutrition assistant & daily mental wellness guidance'**
+  /// **'Conversational AI wellness assistant'**
   String get projectNutrimindFeature4;
 
   /// Qoot title
   ///
   /// In en, this message translates to:
-  /// **'Qoot — Food Donation Application'**
+  /// **'Qoot — Food Donation App'**
   String get projectQootTitle;
 
   /// Qoot category
@@ -1103,13 +1115,13 @@ abstract class AppLocalizations {
   /// Qoot description
   ///
   /// In en, this message translates to:
-  /// **'Developed the complete Charity module for the Qoot food-donation application using Flutter and Bloc/Cubit architecture within a multidisciplinary DEPI team. Implemented core donation workflows, reservation tracking, charity profile management, and responsive Clean Architecture screens to reduce food waste and support charities.'**
+  /// **'Engineered the Charity module for the Qoot food-donation initiative within a DEPI team, implementing donation reservation workflows, charity profiles, and clean architecture UI to fight food waste.'**
   String get projectQootDesc;
 
   /// Qoot feature 1
   ///
   /// In en, this message translates to:
-  /// **'Complete Charity Module & Donation Reservation Workflow'**
+  /// **'Charity Module & Donation Reservation Workflow'**
   String get projectQootFeature1;
 
   /// Qoot feature 2
@@ -1121,13 +1133,13 @@ abstract class AppLocalizations {
   /// Qoot feature 3
   ///
   /// In en, this message translates to:
-  /// **'Real-world initiative to reduce food waste and empower charities'**
+  /// **'Real-world initiative to reduce food waste and support charities'**
   String get projectQootFeature3;
 
   /// Sanad title
   ///
   /// In en, this message translates to:
-  /// **'Sanad — Legal Services Platform'**
+  /// **'Sanad — Legal Services App'**
   String get projectSanadTitle;
 
   /// Sanad category
@@ -1139,25 +1151,25 @@ abstract class AppLocalizations {
   /// Sanad description
   ///
   /// In en, this message translates to:
-  /// **'Developed a mobile application that connects clients with lawyers for legal consultations and case representation through a user-friendly platform. Enables browsing lawyers based on experience, education, pricing, and client reviews, viewing detailed lawyer profiles, and communicating seamlessly. Includes an AI-powered chatbot to assist users and support lawyers in analyzing cases and finding similar legal references.'**
+  /// **'A legal platform connecting clients with verified lawyers for consultations and case representation, powered by an AI assistant for rapid case analysis and reference discovery.'**
   String get projectSanadDesc;
 
   /// Sanad feature 1
   ///
   /// In en, this message translates to:
-  /// **'Intelligent Lawyer Discovery, Verified Profiles & Client Reviews'**
+  /// **'Verified Lawyer Discovery & Client Consultations'**
   String get projectSanadFeature1;
 
   /// Sanad feature 2
   ///
   /// In en, this message translates to:
-  /// **'Seamless Legal Consultations & Case Representation Booking'**
+  /// **'Case Representation Booking & Profile Management'**
   String get projectSanadFeature2;
 
   /// Sanad feature 3
   ///
   /// In en, this message translates to:
-  /// **'AI Legal Chatbot for Case Analysis & Reference Discovery'**
+  /// **'AI Legal Chatbot for Case Analysis & Discovery'**
   String get projectSanadFeature3;
 
   /// Rafeeq title
@@ -1175,7 +1187,7 @@ abstract class AppLocalizations {
   /// Rafeeq description
   ///
   /// In en, this message translates to:
-  /// **'Developed a mobile application connecting startup founders with investors to support startup ideas and funding opportunities through an interactive platform. Enables founders to showcase projects and allows investors to browse, filter, and discover vetted startup concepts based on interests, fostering smoother investment and collaboration.'**
+  /// **'An interactive platform connecting startup founders with investors, featuring multi-step pitch creation, custom venture discovery, and direct collaboration channels.'**
   String get projectRafeeqDesc;
 
   /// Rafeeq feature 1

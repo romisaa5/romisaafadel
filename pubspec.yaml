@@ -47,4 +47,7 @@ flutter:
     - assets/images/logo.png
     - assets/images/profile.jpg
     - assets/images/projects/nutrimind/
+    - assets/images/projects/sanad/
+    - assets/images/projects/qoot/
+    - assets/images/projects/rafeeq/
     - assets/documents/
