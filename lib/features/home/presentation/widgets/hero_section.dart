@@ -178,14 +178,19 @@ class _HeroSectionState extends State<HeroSection>
                         content: _buildContent(),
                         visual: _buildVisual(isWide: true),
                       )
-                    else
-                      _StackedLayout(
+                    else if (context.isMedium)
+                      _TabletLayout(
                         content: _buildContent(),
                         visual: _buildVisual(isWide: false),
-                        isMedium: context.isMedium,
+                      )
+                    else
+                      _MobileLayout(
+                        heroContent: _buildHeroContent(),
+                        visual: _buildVisual(isWide: false, isCompact: true),
+                        actions: _buildHeroActions(isMobile: true),
                       ),
 
-                    const SizedBox(height: 56),
+                    SizedBox(height: isDesktop ? 56 : 36),
 
                     // Architectural bottom divider line with center dot
                     _SectionBottomDivider(isDark: isDark),
@@ -199,33 +204,39 @@ class _HeroSectionState extends State<HeroSection>
     );
   }
 
+  Widget _buildHeroContent() => HeroContent(
+    nameOpacity: _nameOpacity.value,
+    nameSlide: _nameSlide.value,
+    titleOpacity: _titleOpacity.value,
+    titleSlide: _titleSlide.value,
+    introOpacity: _introOpacity.value,
+    introSlide: _introSlide.value,
+  );
+
+  Widget _buildHeroActions({bool isMobile = false}) => HeroActions(
+    opacity: _actionsOpacity.value,
+    slideOffset: _actionsSlide.value,
+    onViewWorkTap: widget.onViewWorkTap ?? _handleViewWork,
+    onGetInTouchTap: widget.onGetInTouchTap,
+    isMobile: isMobile,
+  );
+
   Widget _buildContent() => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisSize: MainAxisSize.min,
     children: [
-      HeroContent(
-        nameOpacity: _nameOpacity.value,
-        nameSlide: _nameSlide.value,
-        titleOpacity: _titleOpacity.value,
-        titleSlide: _titleSlide.value,
-        introOpacity: _introOpacity.value,
-        introSlide: _introSlide.value,
-      ),
+      _buildHeroContent(),
       const SizedBox(height: 38),
-      HeroActions(
-        opacity: _actionsOpacity.value,
-        slideOffset: _actionsSlide.value,
-        onViewWorkTap: widget.onViewWorkTap ?? _handleViewWork,
-        onGetInTouchTap: widget.onGetInTouchTap,
-      ),
+      _buildHeroActions(isMobile: false),
     ],
   );
 
-  Widget _buildVisual({required bool isWide}) => HeroVisual(
+  Widget _buildVisual({required bool isWide, bool isCompact = false}) => HeroVisual(
     opacity: _visualOpacity.value,
     scale: _visualScale.value,
     parallaxOffset: _parallaxOffset,
     isWide: isWide,
+    isCompact: isCompact,
   );
 }
 
@@ -293,18 +304,16 @@ class _WideLayout extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Stacked (tablet / mobile) layout
+// Tablet layout (portrait centered stacked above content)
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _StackedLayout extends StatelessWidget {
-  const _StackedLayout({
+class _TabletLayout extends StatelessWidget {
+  const _TabletLayout({
     required this.content,
     required this.visual,
-    required this.isMedium,
   });
   final Widget content;
   final Widget visual;
-  final bool isMedium;
 
   @override
   Widget build(BuildContext context) {
@@ -313,8 +322,46 @@ class _StackedLayout extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         visual,
-        SizedBox(height: isMedium ? 40 : 32),
+        const SizedBox(height: 40),
         content,
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mobile layout (1. Name/Title + Intro, 2. Centered Profile Image, 3. Actions)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _MobileLayout extends StatelessWidget {
+  const _MobileLayout({
+    required this.heroContent,
+    required this.visual,
+    required this.actions,
+  });
+
+  final Widget heroContent;
+  final Widget visual;
+  final Widget actions;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // 1. Name & professional title + 2. Short introduction
+        heroContent,
+
+        const SizedBox(height: 28),
+
+        // 3. Profile photograph centered horizontally
+        Center(child: visual),
+
+        const SizedBox(height: 28),
+
+        // 4. Action buttons positioned directly below the profile photograph
+        Center(child: actions),
       ],
     );
   }

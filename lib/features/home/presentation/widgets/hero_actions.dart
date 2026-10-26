@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -20,12 +21,14 @@ class HeroActions extends StatefulWidget {
     required this.slideOffset,
     required this.onViewWorkTap,
     this.onGetInTouchTap,
+    this.isMobile = false,
   });
 
   final double opacity;
   final Offset slideOffset;
   final VoidCallback onViewWorkTap;
   final VoidCallback? onGetInTouchTap;
+  final bool isMobile;
 
   @override
   State<HeroActions> createState() => _HeroActionsState();
@@ -131,45 +134,77 @@ class _HeroActionsState extends State<HeroActions> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isCompact = context.isCompact;
+    final isCompact = widget.isMobile || context.isCompact;
 
     return Opacity(
       opacity: widget.opacity,
       child: Transform.translate(
         offset: widget.slideOffset,
-        child: Wrap(
-          alignment: isCompact ? WrapAlignment.center : WrapAlignment.start,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 14,
-          runSpacing: 12,
-          children: [
-            // ── 1. Primary Filled Button: Get in touch ────────────────────
-            _PrimaryButton(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final availableWidth = constraints.maxWidth;
+            final bool shouldStack = isCompact && availableWidth < 460;
+
+            final primaryBtn = _PrimaryButton(
               label: l10n.heroGetInTouch,
               tooltip: l10n.heroGetInTouchTooltip,
               isDark: isDark,
               onTap: () => _handleDefaultGetInTouch(context, l10n),
-            ),
+              isFullWidth: shouldStack,
+            );
 
-            // ── 2. Secondary Outlined Button: View My Work ────────────────
-            _OutlinedActionButton(
+            final viewWorkBtn = _OutlinedActionButton(
               label: l10n.heroViewWork,
               tooltip: l10n.heroViewWorkTooltip,
               icon: Icons.arrow_downward_rounded,
               isDark: isDark,
               onTap: widget.onViewWorkTap,
-            ),
+              isFullWidth: shouldStack,
+            );
 
-            // ── 3. Functional Action Button: Download CV ──────────────────
-            _OutlinedActionButton(
+            final cvBtn = _OutlinedActionButton(
               label: l10n.heroCvDownload,
               tooltip: l10n.heroCvDownloadTooltip,
               icon: Icons.download_rounded,
               loading: _downloading,
               isDark: isDark,
               onTap: () => _handleDownload(l10n),
-            ),
-          ],
+              isFullWidth: shouldStack,
+            );
+
+            if (shouldStack) {
+              return Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: math.min(290.0, availableWidth),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      primaryBtn,
+                      const SizedBox(height: 12),
+                      viewWorkBtn,
+                      const SizedBox(height: 12),
+                      cvBtn,
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            return Wrap(
+              alignment: isCompact ? WrapAlignment.center : WrapAlignment.start,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 14,
+              runSpacing: 12,
+              children: [
+                primaryBtn,
+                viewWorkBtn,
+                cvBtn,
+              ],
+            );
+          },
         ),
       ),
     );
@@ -186,12 +221,14 @@ class _PrimaryButton extends StatefulWidget {
     required this.tooltip,
     required this.isDark,
     required this.onTap,
+    this.isFullWidth = false,
   });
 
   final String label;
   final String tooltip;
   final bool isDark;
   final VoidCallback onTap;
+  final bool isFullWidth;
 
   @override
   State<_PrimaryButton> createState() => _PrimaryButtonState();
@@ -228,6 +265,7 @@ class _PrimaryButtonState extends State<_PrimaryButton> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeOutCubic,
+              alignment: widget.isFullWidth ? Alignment.center : null,
               padding: const EdgeInsets.symmetric(
                 horizontal: 26,
                 vertical: 14,
@@ -246,6 +284,7 @@ class _PrimaryButtonState extends State<_PrimaryButton> {
               ),
               child: Text(
                 widget.label,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   color: fgColor,
                   fontWeight: FontWeight.w600,
@@ -273,6 +312,7 @@ class _OutlinedActionButton extends StatefulWidget {
     required this.onTap,
     this.icon,
     this.loading = false,
+    this.isFullWidth = false,
   });
 
   final String label;
@@ -281,6 +321,7 @@ class _OutlinedActionButton extends StatefulWidget {
   final VoidCallback onTap;
   final IconData? icon;
   final bool loading;
+  final bool isFullWidth;
 
   @override
   State<_OutlinedActionButton> createState() => _OutlinedActionButtonState();
@@ -325,6 +366,7 @@ class _OutlinedActionButtonState extends State<_OutlinedActionButton> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeOutCubic,
+              alignment: widget.isFullWidth ? Alignment.center : null,
               padding: const EdgeInsets.symmetric(
                 horizontal: 24,
                 vertical: 13,
@@ -335,10 +377,12 @@ class _OutlinedActionButtonState extends State<_OutlinedActionButton> {
                 border: Border.all(color: borderColor, width: 1.2),
               ),
               child: Row(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: widget.isFullWidth ? MainAxisSize.max : MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     widget.label,
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       color: fgColor,
                       fontWeight: FontWeight.w500,

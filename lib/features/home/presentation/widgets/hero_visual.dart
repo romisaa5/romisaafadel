@@ -16,31 +16,59 @@ class HeroVisual extends StatelessWidget {
     required this.scale,
     this.parallaxOffset = Offset.zero,
     required this.isWide,
+    this.isCompact = false,
   });
 
   final double opacity;
   final double scale;
   final Offset parallaxOffset;
   final bool isWide;
+  final bool isCompact;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final width = isWide ? 380.0 : 310.0;
-    final height = isWide ? 490.0 : 400.0;
 
-    return Opacity(
-      opacity: opacity,
-      child: Transform.scale(
-        scale: scale,
-        child: _EditorialPortrait(
-          width: width,
-          height: height,
-          isDark: isDark,
-          parallaxOffset: parallaxOffset,
-          isWide: isWide,
-        ),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableWidth = constraints.maxWidth.isFinite
+            ? constraints.maxWidth
+            : MediaQuery.sizeOf(context).width;
+
+        final double width;
+        final double height;
+
+        if (isWide) {
+          width = 380.0;
+          height = 490.0;
+        } else if (!isCompact && availableWidth >= 420.0) {
+          width = 310.0;
+          height = 400.0;
+        } else {
+          // Mobile / compact screen:
+          // The container adds 74px (37px each side for glow & margin).
+          // We leave 82px margin so it never overflows narrow viewports.
+          final maxInnerW = (availableWidth - 82.0).clamp(180.0, 260.0);
+          width = maxInnerW;
+          // Maintain original aspect ratio: 400 / 310 ≈ 1.29
+          height = width * (400.0 / 310.0);
+        }
+
+        return Opacity(
+          opacity: opacity,
+          child: Transform.scale(
+            scale: scale,
+            child: _EditorialPortrait(
+              width: width,
+              height: height,
+              isDark: isDark,
+              parallaxOffset: parallaxOffset,
+              isWide: isWide,
+              isCompact: isCompact || width < 280.0,
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -52,6 +80,7 @@ class _EditorialPortrait extends StatefulWidget {
     required this.isDark,
     required this.parallaxOffset,
     required this.isWide,
+    this.isCompact = false,
   });
 
   final double width;
@@ -59,6 +88,7 @@ class _EditorialPortrait extends StatefulWidget {
   final bool isDark;
   final Offset parallaxOffset;
   final bool isWide;
+  final bool isCompact;
 
   @override
   State<_EditorialPortrait> createState() => _EditorialPortraitState();
@@ -267,23 +297,24 @@ class _EditorialPortraitState extends State<_EditorialPortrait>
 
                 // Technology badge, floating independently near the bottom.
                 Positioned(
-                  bottom: 9 + floatY * 0.5,
+                  bottom: (widget.isCompact ? 6 : 9) + floatY * 0.5,
                   right: 0 - floatX * 0.4,
                   child: Transform.rotate(
                     angle: 0.045 - hover * 0.025,
                     child: _FloatingBadge(
                       isDark: isDark,
+                      isCompact: widget.isCompact,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
                             Icons.flutter_dash,
-                            size: 19,
+                            size: widget.isCompact ? 16 : 19,
                             color: isDark
                                 ? AppColors.dustyRose
                                 : AppColors.mauve,
                           ),
-                          const SizedBox(width: 7),
+                          SizedBox(width: widget.isCompact ? 5 : 7),
                           const Text('Flutter Developer'),
                         ],
                       ),
@@ -313,20 +344,28 @@ class _EditorialPortraitState extends State<_EditorialPortrait>
 }
 
 class _FloatingBadge extends StatelessWidget {
-  const _FloatingBadge({required this.isDark, required this.child});
+  const _FloatingBadge({
+    required this.isDark,
+    required this.child,
+    this.isCompact = false,
+  });
 
   final bool isDark;
   final Widget child;
+  final bool isCompact;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+      padding: EdgeInsets.symmetric(
+        horizontal: isCompact ? 10 : 14,
+        vertical: isCompact ? 7 : 11,
+      ),
       decoration: BoxDecoration(
         color: (isDark ? AppColors.darkSurface : Colors.white).withValues(
           alpha: 0.94,
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(isCompact ? 12 : 16),
         border: Border.all(
           color: (isDark ? AppColors.dustyRose : AppColors.mauve).withValues(
             alpha: 0.22,
@@ -335,7 +374,7 @@ class _FloatingBadge extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: AppColors.mauve.withValues(alpha: isDark ? 0.16 : 0.09),
-            blurRadius: 22,
+            blurRadius: isCompact ? 16 : 22,
             offset: const Offset(0, 8),
           ),
         ],
@@ -343,7 +382,7 @@ class _FloatingBadge extends StatelessWidget {
       child: DefaultTextStyle(
         style: TextStyle(
           color: isDark ? AppColors.ivory : AppColors.deepPlum,
-          fontSize: 12,
+          fontSize: isCompact ? 11 : 12,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.1,
         ),
