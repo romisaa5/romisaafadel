@@ -1,0 +1,90 @@
+name: Deploy Flutter Web to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      base_href:
+        description: 'Custom base-href (optional, e.g. /protofolio/ or /romisaa-portfolio/ or /)'
+        required: false
+        default: ''
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build Flutter Web
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Verify Flutter Version
+        run: flutter --version
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Determine Base Href and Build Web App
+        run: |
+          # Detect actual repo name from context
+          REPO_NAME="${{ github.event.repository.name }}"
+          if [ -z "$REPO_NAME" ]; then
+            REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+          fi
+
+          # Priority:
+          # 1. Manual workflow input if provided
+          # 2. If user site repo (e.g. romisaa5.github.io), use root '/'
+          # 3. If repo is named 'protofolio', use '/protofolio/'
+          # 4. If repo is named 'romisaa-portfolio', use '/romisaa-portfolio/'
+          # 5. Fallback to '/$REPO_NAME/' for any other project repository
+          if [ -n "${{ inputs.base_href }}" ]; then
+            BASE_HREF="${{ inputs.base_href }}"
+          elif [ "$REPO_NAME" = "${{ github.repository_owner }}.github.io" ]; then
+            BASE_HREF="/"
+          elif [ "$REPO_NAME" = "protofolio" ]; then
+            BASE_HREF="/protofolio/"
+          elif [ "$REPO_NAME" = "romisaa-portfolio" ]; then
+            BASE_HREF="/romisaa-portfolio/"
+          else
+            BASE_HREF="/$REPO_NAME/"
+          fi
+
+          echo "Detected repository name: $REPO_NAME"
+          echo "Building Flutter Web with base-href: $BASE_HREF"
+          flutter build web --release --base-href "$BASE_HREF"
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

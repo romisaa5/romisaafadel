@@ -1,8 +1,8 @@
 /// Named route paths for the application.
 abstract final class AppRoutes {
-  /// The splash/loading screen shown at startup.
-  static const String splash = '/';
+  /// Deprecated splash path retained for backwards compatibility.
+  static const String splash = '/splash';
 
-  /// The main home screen (destination after splash).
-  static const String home = '/home';
+  /// The main home screen (direct landing route).
+  static const String home = '/';
 }

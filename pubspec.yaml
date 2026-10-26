@@ -32,6 +32,7 @@ dependencies:
 
   # Web platform API (anchor-tag download for CV)
   web: ^1.1.1
+  flutter_native_splash: ^2.4.8
 
 dev_dependencies:
   flutter_test:
@@ -45,9 +46,23 @@ flutter:
 
   assets:
     - assets/images/logo.png
+    - assets/images/splash_background.png
     - assets/images/profile.jpg
     - assets/images/projects/nutrimind/
     - assets/images/projects/sanad/
     - assets/images/projects/qoot/
     - assets/images/projects/rafeeq/
     - assets/documents/
+
+flutter_native_splash:
+  color: "#291C29"
+  color_dark: "#291C29"
+  background_image: "assets/images/splash_background.png"
+  background_image_dark: "assets/images/splash_background.png"
+  image: "assets/images/logo.png"
+  image_dark: "assets/images/logo.png"
+  web_image_mode: center
+  android: false
+  ios: false
+  web: true
+

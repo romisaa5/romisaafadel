@@ -8,23 +8,38 @@ import 'theme/theme_state.dart';
 import 'localization/locale_cubit.dart';
 import 'localization/locale_state.dart';
 import 'localization/localization_config.dart';
-import '../features/splash/presentation/cubit/splash_cubit.dart';
 
 /// Root application widget.
 ///
-/// Provides ThemeCubit, LocaleCubit, and SplashCubit to the widget tree via
-/// MultiBlocProvider. MaterialApp.router is driven by go_router and reacts to
-/// theme and locale changes from their respective cubits.
+/// Provides ThemeCubit and LocaleCubit to the widget tree via MultiBlocProvider.
+/// MaterialApp.router is driven by go_router and reacts to theme and locale
+/// changes from their respective cubits.
 class App extends StatelessWidget {
-  const App({super.key});
+  final ThemeCubit? themeCubit;
+  final LocaleCubit? localeCubit;
+
+  const App({
+    super.key,
+    this.themeCubit,
+    this.localeCubit,
+  });
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
-        BlocProvider<LocaleCubit>(create: (_) => LocaleCubit()),
-        BlocProvider<SplashCubit>(create: (_) => SplashCubit()),
+        if (themeCubit != null)
+          BlocProvider<ThemeCubit>.value(value: themeCubit!)
+        else
+          BlocProvider<ThemeCubit>(
+            create: (_) => ThemeCubit()..loadSavedTheme(),
+          ),
+        if (localeCubit != null)
+          BlocProvider<LocaleCubit>.value(value: localeCubit!)
+        else
+          BlocProvider<LocaleCubit>(
+            create: (_) => LocaleCubit()..loadSavedLocale(),
+          ),
       ],
       child: BlocBuilder<ThemeCubit, ThemeState>(
         builder: (context, themeState) {

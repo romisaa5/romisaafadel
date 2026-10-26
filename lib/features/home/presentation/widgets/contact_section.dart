@@ -322,13 +322,11 @@ class _HeroEmailButtonState extends State<_HeroEmailButton> {
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       child: InkWell(
-        onTap: () async {
-          await WebUrlLauncher.sendEmail(
-            widget.email,
-            subject: 'Connecting via Romisaa Portfolio',
-          );
-          if (!context.mounted) return;
+        onTap: () {
+          final opened = WebUrlLauncher.openGmailCompose(email: widget.email);
           Clipboard.setData(ClipboardData(text: widget.email));
+          if (!context.mounted) return;
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
@@ -338,9 +336,13 @@ class _HeroEmailButtonState extends State<_HeroEmailButton> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      isArabic
-                          ? 'جاري فتح تطبيق البريد (${widget.email})'
-                          : 'Opening email client (${widget.email})',
+                      opened
+                          ? (isArabic
+                              ? 'جاري فتح بريد Gmail (${widget.email})'
+                              : 'Opening Gmail compose (${widget.email})')
+                          : (isArabic
+                              ? 'تم نسخ البريد الإلكتروني (${widget.email})'
+                              : 'Email address copied (${widget.email})'),
                       style: GoogleFonts.outfit(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -447,10 +449,12 @@ class _ContactChannelsGrid extends StatelessWidget {
         value: ContactSection.email,
         icon: const Icon(Icons.mail_outline_rounded, size: 19),
         actionLabel: l10n.contactSendEmailBtn,
-        onAction: () async {
-          await WebUrlLauncher.sendEmail(ContactSection.email);
-          if (!context.mounted) return;
+        onAction: () {
+          final opened =
+              WebUrlLauncher.openGmailCompose(email: ContactSection.email);
           Clipboard.setData(const ClipboardData(text: ContactSection.email));
+          if (!context.mounted) return;
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
@@ -460,9 +464,13 @@ class _ContactChannelsGrid extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      isArabic
-                          ? 'جاري فتح تطبيق البريد (${ContactSection.email})'
-                          : 'Opening email client (${ContactSection.email})',
+                      opened
+                          ? (isArabic
+                              ? 'جاري فتح بريد Gmail (${ContactSection.email})'
+                              : 'Opening Gmail compose (${ContactSection.email})')
+                          : (isArabic
+                              ? 'تم نسخ البريد الإلكتروني (${ContactSection.email})'
+                              : 'Email address copied (${ContactSection.email})'),
                       style: GoogleFonts.outfit(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
