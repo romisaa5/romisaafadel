@@ -92,6 +92,18 @@ class _ExperienceSectionState extends State<ExperienceSection>
   // Hovered milestone index (-1 if none)
   int _hoveredIndex = -1;
 
+  List<TimelineMilestone>? _cachedMilestones;
+  Locale? _cachedLocale;
+
+  List<TimelineMilestone> _getMilestones(AppLocalizations l10n, bool isArabic, Locale locale) {
+    if (_cachedMilestones != null && _cachedLocale == locale) {
+      return _cachedMilestones!;
+    }
+    _cachedLocale = locale;
+    _cachedMilestones = _buildMilestones(l10n, isArabic);
+    return _cachedMilestones!;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -159,6 +171,16 @@ class _ExperienceSectionState extends State<ExperienceSection>
         ),
       );
     }
+
+    // Safety fallback: ensure section is never left invisible if scroll triggers are delayed or bypassed
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      Future.delayed(const Duration(milliseconds: 700), () {
+        if (mounted && !_headerVisible) {
+          _onHeaderVisible();
+        }
+      });
+    });
   }
 
   @override
@@ -175,11 +197,19 @@ class _ExperienceSectionState extends State<ExperienceSection>
     if (!_headerVisible) {
       _headerVisible = true;
       _headerCtrl.forward();
+
+      // Cascade milestone reveal animations with a smooth 60ms stagger
+      for (int i = 0; i < _milestoneCtrl.length; i++) {
+        final idx = i;
+        Future.delayed(Duration(milliseconds: 60 * (idx + 1)), () {
+          if (mounted) _onMilestoneVisible(idx);
+        });
+      }
     }
   }
 
   void _onMilestoneVisible(int index) {
-    if (!_milestoneVisible[index]) {
+    if (index >= 0 && index < _milestoneVisible.length && !_milestoneVisible[index]) {
       _milestoneVisible[index] = true;
       _milestoneCtrl[index].forward();
     }
@@ -373,7 +403,8 @@ class _ExperienceSectionState extends State<ExperienceSection>
         : AppColors.deepPlum.withValues(alpha: 0.76);
     final accentColor = isDark ? AppColors.dustyRose : AppColors.mauve;
 
-    final milestones = _buildMilestones(l10n, isArabic);
+    final locale = Localizations.localeOf(context);
+    final milestones = _getMilestones(l10n, isArabic, locale);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -413,10 +444,7 @@ class _ExperienceSectionState extends State<ExperienceSection>
           return _VisibilityTrigger(
             onVisible: () => _onMilestoneVisible(index),
             child: AnimatedBuilder(
-              animation: Listenable.merge([
-                _milestoneCtrl[index],
-                _spinePulseCtrl,
-              ]),
+              animation: _milestoneCtrl[index],
               builder: (ctx, _) {
                 return FadeTransition(
                   opacity: _milestoneFade[index],
@@ -445,7 +473,6 @@ class _ExperienceSectionState extends State<ExperienceSection>
                                   secondaryText: secondaryText,
                                   bodyText: bodyText,
                                   accentColor: accentColor,
-                                  pulseProgress: _spinePulseCtrl.value,
                                 )
                               : _buildMobileMilestoneRow(
                                   milestone: milestone,
@@ -460,7 +487,6 @@ class _ExperienceSectionState extends State<ExperienceSection>
                                   secondaryText: secondaryText,
                                   bodyText: bodyText,
                                   accentColor: accentColor,
-                                  pulseProgress: _spinePulseCtrl.value,
                                 ),
                         ),
                       ),
@@ -703,7 +729,6 @@ class _ExperienceSectionState extends State<ExperienceSection>
     required Color secondaryText,
     required Color bodyText,
     required Color accentColor,
-    required double pulseProgress,
   }) {
     final categoryAccent = _getCategoryAccent(milestone.category, isDark);
     final cardIsOnLeft = index.isEven;
@@ -738,19 +763,22 @@ class _ExperienceSectionState extends State<ExperienceSection>
       ),
     );
 
-    final spineNode = _TimelineSpineNode(
-      milestone: milestone,
-      isFirst: isFirst,
-      isLast: isLast,
-      isHovered: isHovered,
-      isDark: isDark,
-      isArabic: isArabic,
-      categoryAccent: categoryAccent,
-      pulseProgress: pulseProgress,
-      cardIsOnLeft: cardIsOnLeft,
-      isMobile: false,
-      nodeYOffset: 34.0,
-      onHover: (hovered) => setState(() => _hoveredIndex = hovered ? index : -1),
+    final spineNode = AnimatedBuilder(
+      animation: _spinePulseCtrl,
+      builder: (context, _) => _TimelineSpineNode(
+        milestone: milestone,
+        isFirst: isFirst,
+        isLast: isLast,
+        isHovered: isHovered,
+        isDark: isDark,
+        isArabic: isArabic,
+        categoryAccent: categoryAccent,
+        pulseProgress: _spinePulseCtrl.value,
+        cardIsOnLeft: cardIsOnLeft,
+        isMobile: false,
+        nodeYOffset: 34.0,
+        onHover: (hovered) => setState(() => _hoveredIndex = hovered ? index : -1),
+      ),
     );
 
     return LayoutBuilder(
@@ -818,23 +846,25 @@ class _ExperienceSectionState extends State<ExperienceSection>
     required Color secondaryText,
     required Color bodyText,
     required Color accentColor,
-    required double pulseProgress,
   }) {
     final categoryAccent = _getCategoryAccent(milestone.category, isDark);
 
-    final spineNode = _TimelineSpineNode(
-      milestone: milestone,
-      isFirst: isFirst,
-      isLast: isLast,
-      isHovered: isHovered,
-      isDark: isDark,
-      isArabic: isArabic,
-      categoryAccent: categoryAccent,
-      pulseProgress: pulseProgress,
-      cardIsOnLeft: false, // in single-sided layout, card is always to the trailing side
-      isMobile: true,
-      nodeYOffset: 28.0,
-      onHover: (hovered) => setState(() => _hoveredIndex = hovered ? index : -1),
+    final spineNode = AnimatedBuilder(
+      animation: _spinePulseCtrl,
+      builder: (context, _) => _TimelineSpineNode(
+        milestone: milestone,
+        isFirst: isFirst,
+        isLast: isLast,
+        isHovered: isHovered,
+        isDark: isDark,
+        isArabic: isArabic,
+        categoryAccent: categoryAccent,
+        pulseProgress: _spinePulseCtrl.value,
+        cardIsOnLeft: false, // in single-sided layout, card is always to the trailing side
+        isMobile: true,
+        nodeYOffset: 28.0,
+        onHover: (hovered) => setState(() => _hoveredIndex = hovered ? index : -1),
+      ),
     );
 
     final cardWidget = MouseRegion(
@@ -1929,6 +1959,7 @@ class _VisibilityTrigger extends StatefulWidget {
 
 class _VisibilityTriggerState extends State<_VisibilityTrigger> {
   bool _fired = false;
+  ScrollPosition? _scrollPosition;
 
   @override
   void initState() {
@@ -1936,18 +1967,45 @@ class _VisibilityTriggerState extends State<_VisibilityTrigger> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _checkVisibility());
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _updateScrollListener();
+  }
+
+  void _updateScrollListener() {
+    final newPosition = Scrollable.maybeOf(context)?.position;
+    if (_scrollPosition != newPosition) {
+      _scrollPosition?.removeListener(_checkVisibility);
+      _scrollPosition = newPosition;
+      _scrollPosition?.addListener(_checkVisibility);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollPosition?.removeListener(_checkVisibility);
+    super.dispose();
+  }
+
   void _checkVisibility() {
     if (_fired || !mounted) return;
     final box = context.findRenderObject() as RenderBox?;
-    if (box == null || !box.attached || !box.hasSize) return;
+    if (box == null || !box.attached || !box.hasSize) {
+      // Retry next frame once layout measurement is available
+      WidgetsBinding.instance.addPostFrameCallback((_) => _checkVisibility());
+      return;
+    }
 
     try {
       final pos = box.localToGlobal(Offset.zero);
       final screenH = MediaQuery.sizeOf(context).height;
 
       // Trigger reveal as soon as element nears the bottom of the viewport
-      if (pos.dy < screenH + 180) {
+      // Using an anticipated 350px margin so animations begin gracefully before reaching view
+      if (pos.dy < screenH + 350) {
         _fired = true;
+        _scrollPosition?.removeListener(_checkVisibility);
         widget.onVisible();
       }
     } catch (_) {}
